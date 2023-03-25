@@ -1,4 +1,3 @@
-<br>
 
 <h1>카페자리 - 안드로이드</h1>
 
@@ -74,14 +73,27 @@
 ---
 
 
-## 💬 소통
+## 🔗 링크
 
-<a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//github.com/aregtech/areg-sdk" target="_blank"><img src="https://img.shields.io/twitter/url?label=LinkedIn&logo=LinkedIn&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" alt="Share on LinkedIn"/></a>&nbsp;
-<a href="https://twitter.com/intent/tweet?text=%23AREG%20%23realtime%20communication%20engine%20for%20%23embedded%20and%20%23IoT%0A%0Ahttps%3A//github.com/aregtech/areg-sdk" target="_blank"><img src="https://img.shields.io/twitter/url?label=Twitter&logo=Twitter&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" alt="Shared on Twitter"/></a>&nbsp;
-<a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//github.com/aregtech/areg-sdk" target="_blank"><img src="https://img.shields.io/twitter/url?label=Facebook&logo=Facebook&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" alt="Share on Facebook"/></a>&nbsp;
-<a href="https://t.me/share/url?text=Awesome%20communication%20engine!&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" target="_blank"><img src="https://img.shields.io/twitter/url?label=Telegram&logo=Telegram&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" alt="Share on Telegram"/></a>&nbsp;
-<a href="https://wa.me/?text=Awesome%20communication%20engine!%5Cn%20https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" target="_blank"><img src="https://img.shields.io/twitter/url?label=Whatsapp&logo=Whatsapp&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" alt="Share on Whatsapp"/></a>&nbsp;
-<a href="mailto:?subject=Awesome%20communication%20engine&body=Checkout%20this%20awesome%20communication%20engine%3A%0Ahttps%3A//github.com/aregtech/areg-sdk%0A" target="_blank"><img src="https://img.shields.io/twitter/url?label=GMail&logo=GMail&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk"/></a>
+<a href="https://cafejari.software/" target="_blank">
+<img src="https://img.shields.io/twitter/url?label=homepage&logo=GoogleHome&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk"/>
+</a>&nbsp;
+
+<a href="https://blog.naver.com/cafejari22" target="_blank">
+<img src="https://img.shields.io/twitter/url?label=blog&logo=Naver&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk"/>
+</a>&nbsp;
+
+<a href="https://www.instagram.com/cafejari_official/" target="_blank">
+<img src="https://img.shields.io/twitter/url?label=insta&logo=Instagram&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" alt="Shared on Twitter"/></a>&nbsp;
+
+<a href="https://play.google.com/store/apps/details?id=com.software.cafejariapp" target="_blank">
+<img src="https://img.shields.io/twitter/url?label=android&logo=Android&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" alt="Shared on Twitter"/></a>&nbsp;
+
+<a href="https://apps.apple.com/kr/app/%EC%B9%B4%ED%8E%98%EC%9E%90%EB%A6%AC-%EC%B9%B4%ED%8E%98-%ED%98%BC%EC%9E%A1%EB%8F%84-%ED%99%95%EC%9D%B8-%EC%B9%B4%EA%B3%B5%ED%95%98%EB%A9%B0-%EB%8F%88%EB%B2%84%EB%8A%94-%EC%95%B1/id6444637809" target="_blank">
+<img src="https://img.shields.io/twitter/url?label=ios&logo=AppStore&style=social&url=https%3A%2F%2Fgithub.com%2Faregtech%2Fareg-sdk" alt="Shared on Twitter"/></a>&nbsp;
+
+
+
 
 <br><br>
 
