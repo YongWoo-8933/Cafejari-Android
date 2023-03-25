@@ -188,6 +188,9 @@ fun Navigation(
                     onNavigateToPointResultScreen = { point, type ->
                         pointResultScreenPoint.value = point
                         pointResultScreenType.value = type
+                        globalState.navController.navigate(Screen.PointResultScreen.route) {
+                            popUpTo(Screen.MapScreen.route)
+                        }
                     }
                 )
             }
@@ -207,6 +210,9 @@ fun Navigation(
                 onNavigateToPointResultScreen = { point, type ->
                     pointResultScreenPoint.value = point
                     pointResultScreenType.value = type
+                    globalState.navController.navigate(Screen.PointResultScreen.route) {
+                        popUpTo(Screen.MapScreen.route)
+                    }
                 }
             )
         }
