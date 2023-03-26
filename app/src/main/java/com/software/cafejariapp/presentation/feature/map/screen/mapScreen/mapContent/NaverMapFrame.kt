@@ -48,7 +48,6 @@ import kotlinx.coroutines.*
 fun NaverMapFrame(
     globalState: GlobalState,
     mapViewModel: MapViewModel,
-    adViewModel: AdViewModel,
 
     menuState: MutableState<Boolean>,
     permissionDialogState: MutableState<Boolean>,
@@ -61,7 +60,6 @@ fun NaverMapFrame(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val mapState = mapViewModel.state.value
-    val adCount = rememberSaveable { mutableStateOf(0) }
     val isCafeInfoRefreshButtonVisible = remember { mutableStateOf(false) }
     val locationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -101,11 +99,11 @@ fun NaverMapFrame(
                 )
                 .zIndex(3f),
             contentAlignment = Alignment.BottomEnd
-        ){
+        ) {
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
 
                 VerticalCrowdedColorBar()
 
@@ -301,11 +299,6 @@ fun NaverMapFrame(
                     isForceShowCaption = globalState.modalCafeInfo.value.id == cafeInfo.id,
                     globalZIndex = if(globalState.modalCafeInfo.value.id == cafeInfo.id) 5 else 0,
                     onClick = {
-                        adCount.value += 1
-                        if (adCount.value > 5) {
-                            adViewModel.onEvent(AdEvent.ShowInterstitialAd(context))
-                            adCount.value = 0
-                        }
                         globalState.modalCafeInfo.value = cafeInfo
                         if (cafeInfo.cafes.isNotEmpty()) {
                             globalState.modalCafe.value = cafeInfo.cafes[0]

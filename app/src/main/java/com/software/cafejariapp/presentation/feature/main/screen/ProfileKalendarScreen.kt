@@ -78,7 +78,7 @@ fun ProfileKalendarScreen(
             BaseTopAppBar(
                 isBackButtonEnable = true,
                 onBackButtonClick = { globalState.navController.popBackStack() },
-                title = "내 마스터 활동",
+                title = "내 혼잡도 공유활동",
                 isScrolled = true
             )
         },

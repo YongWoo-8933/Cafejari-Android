@@ -42,11 +42,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun InactivatedMasterRoom(
     globalState: GlobalState,
-    onMasterRegisterButtonClick: (Int) -> Unit,
+    onMasterRegisterButtonClick: (Int, Int) -> Unit,
 ) {
 
     val context: Context = LocalContext.current
     val scope: CoroutineScope = rememberCoroutineScope()
+    val selectedPeriodMinute = rememberSaveable { mutableStateOf(30) }
     val selectedCrowdedIndex = rememberSaveable { mutableStateOf(1) }
     val isLocationLoading = rememberSaveable { mutableStateOf(false) }
     val activityLauncher = rememberLauncherForActivityResult(
@@ -73,6 +74,7 @@ fun InactivatedMasterRoom(
                 VerticalSpacer(height = 12.dp)
 
                 Row {
+
                     globalState.modalCafeInfo.value.cafes.forEach { cafe ->
                         Button(
                             modifier = Modifier
@@ -110,6 +112,66 @@ fun InactivatedMasterRoom(
                                 text = "${cafe.floor.toFloor()}층",
                                 style = MaterialTheme.typography.body2,
                                 color = if (globalState.modalCafe.value == cafe) {
+                                    MaterialTheme.colors.primary
+                                } else {
+                                    HeavyGray
+                                }
+                            )
+                        }
+
+                        HorizontalSpacer(width = 8.dp)
+                    }
+                }
+
+                VerticalSpacer(height = 40.dp)
+
+                Text(
+                    text = "업데이트 주기 선택",
+                    style = MaterialTheme.typography.subtitle2
+                )
+
+                Text(
+                    text = "주기가 짧을수록 받을 수 있는 포인트가 많아져요!",
+                    style = MaterialTheme.typography.caption,
+                    color = HeavyGray
+                )
+
+                VerticalSpacer(height = 12.dp)
+
+                Row {
+
+                    listOf(30, 60).forEach { minute ->
+                        Button(
+                            modifier = Modifier
+                                .width(64.dp)
+                                .height(32.dp),
+                            onClick = { selectedPeriodMinute.value = minute },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = if (selectedPeriodMinute.value == minute) {
+                                    White
+                                } else {
+                                    MoreLightGray
+                                },
+                                disabledBackgroundColor = HeavyGray
+                            ),
+                            border = if (selectedPeriodMinute.value == minute) {
+                                BorderStroke(
+                                    width = (1.5).dp,
+                                    color = MaterialTheme.colors.primary
+                                )
+                            } else null,
+                            shape = MaterialTheme.shapes.medium,
+                            contentPadding = PaddingValues(0.dp),
+                            elevation = ButtonDefaults.elevation(
+                                defaultElevation = 0.dp,
+                                pressedElevation = (-1).dp
+                            )
+                        ) {
+
+                            Text(
+                                text = "${minute}분",
+                                style = MaterialTheme.typography.body2,
+                                color = if (selectedPeriodMinute.value == minute) {
                                     MaterialTheme.colors.primary
                                 } else {
                                     HeavyGray
@@ -291,7 +353,10 @@ fun InactivatedMasterRoom(
                                 globalState.modalCafeInfo.value.latitude,
                                 globalState.modalCafeInfo.value.longitude
                             ) -> globalState.showSnackBar("카페와 거리가 너무 멉니다. 위치 조정 후 다시 시도해주세요")
-                            else -> onMasterRegisterButtonClick(selectedCrowdedIndex.value)
+                            else -> onMasterRegisterButtonClick(
+                                selectedPeriodMinute.value,
+                                selectedCrowdedIndex.value
+                            )
                         }
                     }
                 )

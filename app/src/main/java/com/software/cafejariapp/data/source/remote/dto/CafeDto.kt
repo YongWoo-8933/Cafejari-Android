@@ -118,6 +118,7 @@ data class CafeLogResponse(
     val finish: String,
     val expired: Boolean,
     val point: Int,
+    val update_period: Int = 30,
     val cafe_detail_log: List<CafeDetailLog> = emptyList(),
     val cafe: CafeLogCafeResponse,
     val master: UserResponse
@@ -135,6 +136,7 @@ data class CafeLogResponse(
             finish = this.finish,
             expired = this.expired,
             point = this.point,
+            updatePeriod = this.update_period,
             master = CafeMaster(
                 userId = this.master.id,
                 nickname = this.master.profile.nickname,
@@ -175,7 +177,9 @@ data class ExpireMasterRequest(
 
 @Serializable
 data class RegisterMasterRequest(
-    val cafe_id: Int, val crowded: Int
+    val cafe_id: Int,
+    val update_period: Int,
+    val crowded: Int
 )
 
 @Serializable

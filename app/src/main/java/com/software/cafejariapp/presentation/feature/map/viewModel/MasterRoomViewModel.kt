@@ -31,7 +31,8 @@ class MasterRoomViewModel @Inject constructor(
                         event.globalState.masterCafeLog.value = cafeUseCase.registerMaster(
                             accessToken = event.globalState.accessToken.value,
                             cafeId = event.globalState.modalCafe.value.id,
-                            crowded = event.initialCrowdedInt
+                            crowded = event.initialCrowdedInt,
+                            updatePeriod = event.periodMinute
                         )
                         event.globalState.isMasterActivated.value = true
                         event.globalState.showSnackBar("마스터 등록 성공! 주기적으로 혼잡도를 업데이트 해주세요")
@@ -54,7 +55,9 @@ class MasterRoomViewModel @Inject constructor(
                             event.globalState.refreshAccessToken {
                                 onEvent(
                                     MasterRoomEvent.RegisterMaster(
-                                        event.globalState, event.initialCrowdedInt
+                                        event.globalState,
+                                        event.periodMinute,
+                                        event.initialCrowdedInt
                                     )
                                 )
                             }
