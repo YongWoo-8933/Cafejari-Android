@@ -6,7 +6,8 @@ import com.software.cafejariapp.presentation.feature.map.util.PointResultType
 sealed class MasterRoomEvent {
     data class RegisterMaster(
         val globalState: GlobalState,
-        val initialCrowdedInt: Int
+        val periodMinute: Int,
+        val initialCrowdedInt: Int,
     ) : MasterRoomEvent()
 
     data class UpdateCrowded(

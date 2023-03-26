@@ -111,20 +111,24 @@ fun ActivatedMasterRoom(
                 VerticalSpacer(height = 4.dp)
 
                 Row {
+
                     Text(
-                        text = "최근 업데이트 ",
-                        style = MaterialTheme.typography.caption,
-                        color = Gray
+                        text = if (globalState.masterCafeLog.value.cafeDetailLogs.isNotEmpty()) {
+                            val minute = Time.getMinuteFrom(globalState.masterCafeLog.value.cafeDetailLogs.first().update)
+                            if (globalState.masterCafeLog.value.updatePeriod - minute > 3) {
+                                (globalState.masterCafeLog.value.updatePeriod - minute).toString() + "분"
+                            } else {
+                                "잠시"
+                            }
+                        } else "잠시",
+                        style = MaterialTheme.typography.button,
+                        color = HeavyGray
                     )
 
                     Text(
-                        text = "${
-                            if (globalState.masterCafeLog.value.cafeDetailLogs.isNotEmpty()) {
-                                Time.getPassingTimeFrom(globalState.masterCafeLog.value.cafeDetailLogs.first().update)
-                            } else ""
-                        } 전",
-                        style = MaterialTheme.typography.button,
-                        color = HeavyGray
+                        text = " 후, 혼잡도 공유활동 자동종료",
+                        style = MaterialTheme.typography.caption,
+                        color = Gray
                     )
                 }
 
@@ -214,7 +218,7 @@ fun ActivatedMasterRoom(
 
                     Text(
                         modifier = Modifier.clickable { onExpireMasterTextClick() },
-                        text = "마스터를 종료하시겠어요?",
+                        text = "혼잡도 공유활동을 종료하시겠어요?",
                         textDecoration = TextDecoration.Underline,
                         style = MaterialTheme.typography.subtitle1,
                         color = HeavyGray

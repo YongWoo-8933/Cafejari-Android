@@ -10,10 +10,20 @@ import com.software.cafejariapp.domain.entity.AccessToken
 class RegisterMaster(
     private val cafeRepository: CafeRepository
 ) {
-    suspend operator fun invoke(accessToken: AccessToken, cafeId: Int, crowded: Int): CafeLog {
+    suspend operator fun invoke(
+        accessToken: AccessToken,
+        cafeId: Int,
+        updatePeriod: Int,
+        crowded: Int
+    ): CafeLog {
         return try {
             cafeRepository.registerMaster(
-                accessToken.value, RegisterMasterRequest(cafeId, crowded)
+                accessToken.value,
+                RegisterMasterRequest(
+                    cafeId,
+                    updatePeriod,
+                    crowded
+                )
             ).toCafeLog()
         } catch (e: TokenExpiredException) {
             throw e

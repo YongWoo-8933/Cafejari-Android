@@ -20,6 +20,7 @@ import com.software.cafejariapp.presentation.GlobalState
 import com.software.cafejariapp.presentation.component.BaseDivider
 import com.software.cafejariapp.presentation.component.BaseTopAppBar
 import com.software.cafejariapp.presentation.feature.main.screen.Update.Companion.updateList
+import com.software.cafejariapp.presentation.theme.Gray
 import com.software.cafejariapp.presentation.theme.LightGray
 import com.software.cafejariapp.presentation.theme.MoreHeavyGray
 import com.software.cafejariapp.presentation.theme.White
@@ -68,9 +69,10 @@ fun UpdateScreen(
                             vertical = 24.dp
                         )
                 ) {
+
                     Text(
                         text = update.date,
-                        color = LightGray
+                        color = Gray
                     )
 
                     Row(
@@ -167,6 +169,7 @@ data class Update(
             Update(2, 4, 1, "23.02.23", "추천인 이벤트 추가, 카페 검색기능 추가, 카페정보 제보기능 추가, 자동종료된 마스터활동 광고보기 추가")
         val update18 = Update(2, 4, 2, "23.02.27", "검색 ui 개선")
         val update19 = Update(2, 4, 3, "23.03.02", "추천인 에러 개선, 알림 에러 개선")
+        val update20 = Update(2, 4, 4, "23.03.26", "혼잡도 공유활동 업데이트주기 설정 기능 추가, 전면광고 제거, 마스터활동 -> 혼잡도 공유활동으로 문구수정")
 
         val updateList = listOf(
             update0,
@@ -188,7 +191,8 @@ data class Update(
             update16,
             update17,
             update18,
-            update19
+            update19,
+            update20
         ).reversed()
     }
 }
