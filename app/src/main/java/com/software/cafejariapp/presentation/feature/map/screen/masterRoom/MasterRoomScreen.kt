@@ -61,8 +61,15 @@ fun MasterRoomScreen(
 
         try {
             globalState.startLocationTracking(context)
-        } catch (e: LocationTrackingNotPermitted){
+        } catch (e: LocationTrackingNotPermitted) {
             locationPermissionsState.launchMultiplePermissionRequest()
+        }
+        delay(200L)
+
+        if (globalState.modalCafeInfo.value.id == 0 || globalState.modalCafe.value.id == 0) {
+            globalState.navController.navigate(Screen.MapScreen.route) {
+                popUpTo(Screen.MapScreen.route)
+            }
         }
     }
 
@@ -94,7 +101,7 @@ fun MasterRoomScreen(
             },
             content = {
                 Text(
-                    text = "마스터를 종료하시겠어요?",
+                    text = "혼잡도 공유활동을 종료하시겠어요?",
                     style = MaterialTheme.typography.subtitle1
                 )
 
@@ -188,9 +195,10 @@ fun MasterRoomScreen(
 
                 InactivatedMasterRoom(
                     globalState = globalState,
-                    onMasterRegisterButtonClick = { crowdedInt ->
+                    onMasterRegisterButtonClick = { periodMinute, crowdedInt ->
                         masterRoomViewModel.onEvent(MasterRoomEvent.RegisterMaster(
                             globalState,
+                            periodMinute,
                             crowdedInt
                         ))
                     }

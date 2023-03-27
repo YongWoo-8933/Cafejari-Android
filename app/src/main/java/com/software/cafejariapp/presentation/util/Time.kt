@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit
  * getHourMinute -> "16:46",
  * getKoreanHourMinute -> "16시 46분",
  * getSecondFrom -> 31,
+ * getMinuteFrom -> 20,
  * getHourMinuteFromSecond -> "12시간 15분",
  * getPassingTimeFrom -> "12시간 15분",
  * getPassingTimeFromTo -> "12시간 15분",
@@ -61,10 +62,16 @@ object Time {
         return "${hour}시 ${minutes}분"
     }
 
-    fun getSecondFrom(at: String ):Int {
+    fun getSecondFrom(at: String): Int {
         val now = LocalDateTime.now()
         val targetTime = getLocalDateTimeFrom(at)
         return ChronoUnit.SECONDS.between( targetTime, now ).toInt()
+    }
+
+    fun getMinuteFrom(at: String): Int {
+        val now = LocalDateTime.now()
+        val targetTime = getLocalDateTimeFrom(at)
+        return ChronoUnit.MINUTES.between( targetTime, now ).toInt()
     }
 
     fun getHourMinuteFromSecond(second: Int): String {

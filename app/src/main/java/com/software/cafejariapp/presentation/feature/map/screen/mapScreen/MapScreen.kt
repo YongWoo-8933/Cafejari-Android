@@ -271,7 +271,6 @@ fun MapScreen(
         NaverMapFrame(
             globalState = globalState,
             mapViewModel = mapViewModel,
-            adViewModel = adViewModel,
 
             menuState = isMenuOpened,
             permissionDialogState = isLocationPermissionDialogOpened,

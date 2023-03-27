@@ -17,11 +17,12 @@ data class CafeLog(
     val finish: String,
     val expired: Boolean,
     val point: Int,
+    val updatePeriod: Int,
     val master: CafeMaster,
     val cafeDetailLogs: List<CafeDetailLog> = emptyList()
 ):Parcelable{
     companion object{
         val empty = CafeLog(0, 0,"", 0.0, 0.0,1, "",
-            "", false,0, CafeMaster.empty, emptyList())
+            "", false,0, 30, CafeMaster.empty, emptyList())
     }
 }
