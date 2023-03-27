@@ -35,6 +35,7 @@ import com.software.cafejariapp.presentation.theme.Gray
 import com.software.cafejariapp.presentation.theme.White
 import com.software.cafejariapp.presentation.util.Screen
 import com.software.cafejariapp.presentation.util.Time
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -80,7 +81,7 @@ fun ProfileScreen(
         CustomAlertDialog(
             onDismiss = { isLogoutDialogOpened.value = false },
             positiveButtonText = "로그아웃",
-            onPositiveButtonClick = { profileViewModel.onEvent(ProfileEvent.Logout(globalState)) },
+            onPositiveButtonClick = { globalState.globalScope.launch { globalState.logout() } },
             negativeButtonText = "아니오",
             onNegativeButtonClick = { },
             content = {
