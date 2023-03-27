@@ -7,7 +7,6 @@ import com.software.cafejariapp.presentation.GlobalState
 sealed class ProfileEvent {
     // profile
     data class ProfileScreenInit(val globalState: GlobalState) : ProfileEvent()
-    data class Logout(val globalState: GlobalState) : ProfileEvent()
 
     // profile edit
     data class ProfileEditScreenInit(val globalState: GlobalState) : ProfileEvent()

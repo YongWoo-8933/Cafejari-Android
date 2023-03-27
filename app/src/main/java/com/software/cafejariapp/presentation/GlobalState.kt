@@ -82,10 +82,19 @@ class GlobalState(
                     cameraPositionState = CameraPositionState(
                         position = CameraPosition(
                             LatLng(
-                                p0.lastLocation!!.latitude, p0.lastLocation!!.longitude
+                                p0.lastLocation!!.latitude,
+                                p0.lastLocation!!.longitude
                             ), Zoom.MEDIUM
                         )
                     )
+                    if (isLoggedIn.value) {
+                        refreshCafeInfos(
+                            LatLng(
+                                p0.lastLocation!!.latitude,
+                                p0.lastLocation!!.longitude
+                            )
+                        )
+                    }
                 }
                 userLocation.value = p0.lastLocation
             }
@@ -118,6 +127,7 @@ class GlobalState(
                 refreshToken.value = tokenUseCase.getSavedRefreshToken()
 
                 if (refreshToken.value.value.isNotBlank()) {
+
                     accessToken.value = tokenUseCase.getAccessToken(refreshToken.value)
                     isLoggedIn.value = true
 
@@ -205,7 +215,7 @@ class GlobalState(
             showSnackBar("이미 로그아웃 상태입니다")
         } else {
             try {
-                val profileId = user.value.profile_id
+                val profileId = user.value.profileId
                 loginUseCase.updateFcmToken(accessToken.value, profileId, EMPTY)
                 loginUseCase.logout(refreshToken.value)
                 tokenUseCase.updateSavedRefreshToken(RefreshToken.empty)
@@ -261,7 +271,9 @@ class GlobalState(
                 }
                 if (cafeLog.id == 0) {
                     masterCafeLog.value = masterCafeLog.value.copy(
-                        id = 0, expired = true, cafeDetailLogs = emptyList()
+                        id = 0,
+                        expired = true,
+                        cafeDetailLogs = emptyList()
                     )
                     isMasterActivated.value = false
                 } else {
@@ -294,11 +306,11 @@ class GlobalState(
     fun updateUserFcmToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (task.isSuccessful) {
-                if (user.value.fcm_token != task.result) {
+                if (user.value.fcmToken != task.result) {
                     globalScope.launch {
                         try {
                             loginUseCase.updateFcmToken(
-                                accessToken.value, user.value.profile_id, task.result
+                                accessToken.value, user.value.profileId, task.result
                             ).apply {
                                 user.value = this
                             }

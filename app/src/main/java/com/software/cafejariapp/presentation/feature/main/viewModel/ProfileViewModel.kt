@@ -83,26 +83,6 @@ class ProfileViewModel @Inject constructor(
                     }
                 }
             }
-            is ProfileEvent.Logout -> {
-                viewModelScope.launch {
-                    try {
-                        val profileId = event.globalState.user.value.profile_id
-                        loginUseCase.updateFcmToken(
-                            event.globalState.accessToken.value,
-                            profileId,
-                            event.globalState.EMPTY
-                        )
-                        loginUseCase.logout(event.globalState.refreshToken.value)
-                        tokenUseCase.updateSavedRefreshToken(RefreshToken.empty)
-                        event.globalState.navController.navigate(Screen.CheckLoginScreen.route) {
-                            popUpTo(Screen.MapScreen.route) { inclusive = true }
-                        }
-                        event.globalState.clearGlobalState()
-                    } catch (e: CustomException) {
-                        event.globalState.showSnackBar(e.message.toString())
-                    }
-                }
-            }
             is ProfileEvent.ProfileEditScreenInit -> {
                 _state.value = state.value.copy(
                     isSocialUserTypeLoading = true,
@@ -250,7 +230,7 @@ class ProfileViewModel @Inject constructor(
                     try {
                         event.globalState.user.value = loginUseCase.updateProfile(
                             accessToken = event.globalState.accessToken.value,
-                            profileId = event.globalState.user.value.profile_id,
+                            profileId = event.globalState.user.value.profileId,
                             imagePath = imagePath,
                             nickname = nickname,
                         )
