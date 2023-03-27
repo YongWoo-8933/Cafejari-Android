@@ -82,10 +82,15 @@ class GlobalState(
                     cameraPositionState = CameraPositionState(
                         position = CameraPosition(
                             LatLng(
-                                p0.lastLocation!!.latitude, p0.lastLocation!!.longitude
+                                p0.lastLocation!!.latitude,
+                                p0.lastLocation!!.longitude
                             ), Zoom.MEDIUM
                         )
                     )
+                    refreshCafeInfos(LatLng(
+                        p0.lastLocation!!.latitude,
+                        p0.lastLocation!!.longitude
+                    ))
                 }
                 userLocation.value = p0.lastLocation
             }
@@ -261,7 +266,9 @@ class GlobalState(
                 }
                 if (cafeLog.id == 0) {
                     masterCafeLog.value = masterCafeLog.value.copy(
-                        id = 0, expired = true, cafeDetailLogs = emptyList()
+                        id = 0,
+                        expired = true,
+                        cafeDetailLogs = emptyList()
                     )
                     isMasterActivated.value = false
                 } else {

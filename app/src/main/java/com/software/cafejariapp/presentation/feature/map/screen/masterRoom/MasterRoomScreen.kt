@@ -64,6 +64,13 @@ fun MasterRoomScreen(
         } catch (e: LocationTrackingNotPermitted) {
             locationPermissionsState.launchMultiplePermissionRequest()
         }
+        delay(200L)
+
+        if (globalState.modalCafeInfo.value.id == 0 || globalState.modalCafe.value.id == 0) {
+            globalState.navController.navigate(Screen.MapScreen.route) {
+                popUpTo(Screen.MapScreen.route)
+            }
+        }
     }
 
     if (isExpireDialogOpened.value) {
