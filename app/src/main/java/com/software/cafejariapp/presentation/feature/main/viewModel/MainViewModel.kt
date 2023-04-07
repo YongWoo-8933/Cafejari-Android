@@ -47,6 +47,7 @@ class MainViewModel @Inject constructor(
                     } catch (e: CustomException) {
                         event.globalState.showSnackBar(e.message.toString())
                     } finally {
+                        delay(600L)
                         _state.value = state.value.copy(
                             isFaqsLoading = false
                         )
@@ -105,6 +106,7 @@ class MainViewModel @Inject constructor(
                     } catch (e: CustomException) {
                         event.globalState.showSnackBar(e.message.toString())
                     } finally {
+                        delay(600L)
                         _state.value = state.value.copy(
                             isInquiryCafeLoading = false
                         )
@@ -189,6 +191,7 @@ class MainViewModel @Inject constructor(
                     } catch (e: CustomException) {
                         event.globalState.showSnackBar(e.message.toString())
                     } finally {
+                        delay(600L)
                         _state.value = state.value.copy(
                             isInquiryEtcLoading = false
                         )
@@ -263,6 +266,7 @@ class MainViewModel @Inject constructor(
                         )
                     } catch (e: CustomException) {
                     } finally {
+                        delay(600L)
                         _state.value = state.value.copy(
                             isEventsLoading = false
                         )

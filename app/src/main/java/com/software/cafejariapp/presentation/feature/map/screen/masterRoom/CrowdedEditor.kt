@@ -32,6 +32,7 @@ import com.software.cafejariapp.presentation.theme.White
 fun CrowdedEditor(
     selectedCrowdedIndex: Int,
     onCrowdedChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
     isTapAnimationEnable: Boolean = false
 ) {
 
@@ -46,7 +47,7 @@ fun CrowdedEditor(
     )
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         border = BorderStroke(
             width = (1.5).dp,
             color = MoreLightGray

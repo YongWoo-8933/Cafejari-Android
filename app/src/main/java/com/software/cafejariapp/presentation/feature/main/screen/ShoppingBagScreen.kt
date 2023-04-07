@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.glide.GlideImage
 import com.software.cafejariapp.R
+import com.software.cafejariapp.core.customPlaceholder
 import com.software.cafejariapp.presentation.GlobalState
 import com.software.cafejariapp.domain.entity.PurchaseHistory
 import com.software.cafejariapp.presentation.component.*
@@ -80,12 +81,14 @@ fun ShoppingBagScreen(
                 .padding(top = paddingValue.calculateTopPadding()),
         ) {
 
-            if (shopState.isPurchaseHistoryLoading) {
-                FullSizeLoadingScreen()
+            if (shopState.purchaseHistories.isEmpty()) {
+                EmptyScreen("구매 이력이 없어요")
             } else {
-                if (shopState.purchaseHistories.isEmpty()) {
-                    EmptyScreen("구매 이력이 없어요")
-                } else {
+                CustomSwipeRefresh(
+                    isLoading = shopState.isPurchaseHistoryLoading,
+                    onRefresh = { shopViewModel.onEvent(ShopEvent.GetPurchaseHistories(globalState)) }
+                ) {
+
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -110,8 +113,8 @@ fun ShoppingBagScreen(
                                         end = 16.dp,
                                         bottom = 0.dp
                                     ),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Start
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
                             ) {
 
                                 Card(
@@ -127,7 +130,9 @@ fun ShoppingBagScreen(
                                 ) {
 
                                     GlideImage(
-                                        modifier = Modifier.fillMaxHeight(),
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .customPlaceholder(shopState.isPurchaseHistoryLoading),
                                         imageModel = purchaseHistory.item_image,
                                         contentScale = ContentScale.FillHeight,
                                         placeHolder = painterResource(id = R.drawable.glide_image_placeholder)
@@ -142,6 +147,7 @@ fun ShoppingBagScreen(
                                 ) {
 
                                     Text(
+                                        modifier = Modifier.customPlaceholder(shopState.isPurchaseHistoryLoading),
                                         text = purchaseHistory.item_name,
                                         style = MaterialTheme.typography.subtitle2,
                                     )
@@ -149,6 +155,7 @@ fun ShoppingBagScreen(
                                     VerticalSpacer(height = 4.dp)
 
                                     Text(
+                                        modifier = Modifier.customPlaceholder(shopState.isPurchaseHistoryLoading),
                                         text = "( ${purchaseHistory.item_brand} )",
                                         color = HeavyGray
                                     )
@@ -164,6 +171,7 @@ fun ShoppingBagScreen(
                                 ) {
 
                                     Icon(
+                                        modifier = Modifier.customPlaceholder(shopState.isPurchaseHistoryLoading),
                                         imageVector = when (purchaseHistory.state) {
                                             PurchaseRequestStateType.request -> Icons.Rounded.Send
                                             PurchaseRequestStateType.complete -> Icons.Rounded.CheckCircle
@@ -182,6 +190,7 @@ fun ShoppingBagScreen(
                                     HorizontalSpacer(width = 12.dp)
 
                                     Text(
+                                        modifier = Modifier.customPlaceholder(shopState.isPurchaseHistoryLoading),
                                         text = when (purchaseHistory.state) {
                                             PurchaseRequestStateType.request -> "요청됨"
                                             PurchaseRequestStateType.complete -> "지급완료"
