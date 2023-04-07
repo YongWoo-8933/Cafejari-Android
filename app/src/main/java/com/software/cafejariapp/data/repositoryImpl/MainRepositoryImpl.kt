@@ -2,7 +2,7 @@ package com.software.cafejariapp.data.repositoryImpl
 
 import com.software.cafejariapp.data.source.remote.HttpRoutes
 import com.software.cafejariapp.core.getException
-import com.software.cafejariapp.data.source.local.dao.DisabledDateDao
+import com.software.cafejariapp.data.source.local.dao.DisableDateDao
 import com.software.cafejariapp.data.source.remote.dto.*
 import com.software.cafejariapp.domain.entity.*
 import com.software.cafejariapp.domain.repository.MainRepository
@@ -12,7 +12,7 @@ import io.ktor.http.*
 import io.ktor.client.statement.*
 
 class MainRepositoryImpl(
-    private val dao: DisabledDateDao, private val client: HttpClient
+    private val dao: DisableDateDao, private val client: HttpClient
 ) : MainRepository {
 
     override suspend fun getDisabledDates(): List<DisableDate> {
@@ -47,6 +47,17 @@ class MainRepositoryImpl(
             client.get {
                 headers { append(HttpHeaders.Authorization, "Bearer $accessToken") }
                 url(HttpRoutes.MONTH_LEADERS)
+            }
+        } catch (throwable: Throwable) {
+            throw throwable.getException()
+        }
+    }
+
+    override suspend fun getTotalRankingList(accessToken: String): List<RankingResponse> {
+        return try {
+            client.get {
+                headers { append(HttpHeaders.Authorization, "Bearer $accessToken") }
+                url(HttpRoutes.TOTAL_LEADERS)
             }
         } catch (throwable: Throwable) {
             throw throwable.getException()

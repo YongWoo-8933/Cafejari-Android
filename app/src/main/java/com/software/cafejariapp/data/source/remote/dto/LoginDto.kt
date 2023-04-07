@@ -164,6 +164,7 @@ data class UpdateFcmTokenRequest(
 data class UserResponse(
     val id: Int,
     val last_login: String,
+    val is_superuser: Boolean,
     val is_staff: Boolean,
     val date_joined: String,
     val email: String,
@@ -175,6 +176,7 @@ data class UserResponse(
             0,
             "",
             false,
+            false,
             "",
             "",
             false
@@ -185,6 +187,7 @@ data class UserResponse(
         return User(
             userId = this.id,
             profileId = this.profile.id,
+            isAdmin = this.is_superuser,
             isStaff = this.is_staff,
             dateJoined = this.date_joined,
             email = this.email,

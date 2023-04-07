@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.software.cafejariapp.presentation.util.Crowded
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 import com.software.cafejariapp.presentation.theme.MoreLightGray
 import com.software.cafejariapp.presentation.theme.White
 
@@ -62,14 +62,14 @@ fun ClockCard(
             HorizontalSpacer(width = 8.dp)
 
             Text(
-                text = Time.getKoreanHourMinute(timeString),
+                text = TimeUtil.getKoreanHourMinute(timeString),
                 style = MaterialTheme.typography.button
             )
 
             HorizontalSpacer(width = 4.dp)
 
             Text(
-                text = "(${Time.getPassingTimeFrom(timeString)}전)",
+                text = "(${TimeUtil.getPassingTimeFrom(timeString)}전)",
                 style = MaterialTheme.typography.caption
             )
         }

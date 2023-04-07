@@ -15,6 +15,7 @@ import com.software.cafejariapp.presentation.feature.main.event.ProfileEvent
 import com.software.cafejariapp.presentation.feature.main.event.ShopEvent
 import com.software.cafejariapp.presentation.feature.main.state.ShopState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 import javax.inject.Inject
@@ -42,6 +43,7 @@ class ShopViewModel @Inject constructor(
                     } catch (e: CustomException) {
 
                     } finally {
+                        delay(600L)
                         _state.value = state.value.copy(
                             isItemLoading = false
                         )
@@ -79,11 +81,11 @@ class ShopViewModel @Inject constructor(
                 }
             }
             is ShopEvent.GetPurchaseHistories -> {
+                _state.value = state.value.copy(
+                    isPurchaseHistoryLoading = true
+                )
                 viewModelScope.launch {
                     try {
-                        mainUseCase.getPurchaseRequestList(
-                            event.globalState.accessToken.value
-                        )
                         _state.value = state.value.copy(
                             purchaseHistories = mainUseCase.getPurchaseRequestList(
                                 event.globalState.accessToken.value
@@ -98,6 +100,7 @@ class ShopViewModel @Inject constructor(
                     } catch (e: CustomException){
                         event.globalState.showSnackBar(e.message.toString())
                     } finally {
+                        delay(600L)
                         _state.value = state.value.copy(
                             isPurchaseHistoryLoading = false
                         )
