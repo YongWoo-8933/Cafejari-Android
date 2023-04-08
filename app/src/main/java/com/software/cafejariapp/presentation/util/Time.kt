@@ -8,7 +8,6 @@ import java.time.temporal.ChronoUnit
  * 시간 계산과 관련된 모든 함수 모음
  *
  * getYearMonthDay -> "2023년 2월 3일",
- * getFirstDayOfThisWeek -> "2023년 2월 3일",
  * getHourMinute -> "16:46",
  * getKoreanHourMinute -> "16시 46분",
  * getSecondFrom -> 31,
@@ -21,7 +20,7 @@ import java.time.temporal.ChronoUnit
  * isPast -> boolean
  */
 
-object TimeUtil {
+object Time {
 
     private fun getLocalDateTimeFrom(at: String): LocalDateTime {
         return LocalDateTime.of(
@@ -47,13 +46,6 @@ object TimeUtil {
         } catch (e: IndexOutOfBoundsException) {
             ""
         }
-    }
-
-    fun getFirstDayOfThisWeek(): String {
-        val now = LocalDateTime.now()
-        val dayOfWeek: Int = now.dayOfWeek.value
-        val firstDateOfThisWeek = now.minusDays((dayOfWeek-1).toLong())
-        return "${firstDateOfThisWeek.year}년 ${firstDateOfThisWeek.monthValue}월 ${firstDateOfThisWeek.dayOfMonth}일"
     }
 
     fun getHourMinute(at: String): String {

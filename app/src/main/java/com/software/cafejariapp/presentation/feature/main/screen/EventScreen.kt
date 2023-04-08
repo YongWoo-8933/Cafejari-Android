@@ -3,7 +3,6 @@ package com.software.cafejariapp.presentation.feature.main.screen
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,24 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.placeholder
-import com.google.accompanist.placeholder.shimmer
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.skydoves.landscapist.glide.GlideImage
 import com.software.cafejariapp.R
-import com.software.cafejariapp.core.customPlaceholder
 import com.software.cafejariapp.presentation.GlobalState
 import com.software.cafejariapp.domain.entity.Event
 import com.software.cafejariapp.presentation.component.*
 import com.software.cafejariapp.presentation.feature.main.event.MainEvent
 import com.software.cafejariapp.presentation.feature.main.viewModel.MainViewModel
-import com.software.cafejariapp.presentation.theme.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.software.cafejariapp.presentation.theme.HalfTransparentBlack
+import com.software.cafejariapp.presentation.theme.HeavyGray
+import com.software.cafejariapp.presentation.theme.White
 
 @Composable
 fun EventScreen(
@@ -57,10 +48,13 @@ fun EventScreen(
         backgroundColor = White
     ) { paddingValue ->
 
-        CustomSwipeRefresh(
-            isLoading = mainState.isEventsLoading,
-            onRefresh = { mainViewModel.onEvent(MainEvent.GetEvents(globalState)) }
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
+
+            if (mainState.isEventsLoading) {
+                FullSizeLoadingScreen(loadingText = "이벤트 로딩 중..")
+            }
 
             LazyColumn(
                 modifier = Modifier
@@ -71,10 +65,7 @@ fun EventScreen(
 
                 items(mainState.events) { event ->
 
-                    EventItem(
-                        event = event,
-                        isLoading = mainState.isEventsLoading
-                    ) {
+                    EventItem(event = event) {
                         globalState.navigateToWebView(
                             topAppBarTitle = "이벤트 상세",
                             url = event.url
@@ -88,10 +79,7 @@ fun EventScreen(
 
                     Box {
 
-                        EventItem(
-                            event = expiredEvent,
-                            isLoading = mainState.isEventsLoading
-                        ) {
+                        EventItem(event = expiredEvent) {
                             globalState.navigateToWebView(
                                 topAppBarTitle = "이벤트 상세",
                                 url = expiredEvent.url
@@ -138,7 +126,6 @@ fun EventScreen(
 private fun EventItem(
     modifier: Modifier = Modifier,
     event: Event,
-    isLoading: Boolean,
     onClick: () -> Unit
 ) {
 
@@ -156,7 +143,6 @@ private fun EventItem(
         ) {
 
             Card(
-                modifier = Modifier.customPlaceholder(visible = isLoading),
                 shape = MaterialTheme.shapes.medium
             ) {
 
@@ -171,22 +157,17 @@ private fun EventItem(
             VerticalSpacer(height = 16.dp)
 
             Text(
-                modifier = Modifier.customPlaceholder(visible = isLoading),
                 text = event.name,
                 style = MaterialTheme.typography.subtitle2
             )
 
             VerticalSpacer(height = 8.dp)
 
-            Text(
-                modifier = Modifier.customPlaceholder(visible = isLoading),
-                text = event.preview
-            )
+            Text(event.preview)
 
             VerticalSpacer(height = 4.dp)
 
             Text(
-                modifier = Modifier.customPlaceholder(visible = isLoading),
                 text = "${
                     event.start.substring(0, 10)
                         .replace("-", ".")

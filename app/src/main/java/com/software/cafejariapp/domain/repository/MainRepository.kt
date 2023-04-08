@@ -47,8 +47,6 @@ interface MainRepository {
 
     suspend fun getMonthRankingList(accessToken: String): List<RankingResponse>
 
-    suspend fun getTotalRankingList(accessToken: String): List<RankingResponse>
-
     suspend fun getPopUpNotificationList(): List<PopUpNotificationResponse>
 
     suspend fun getOnSaleCafeList(): List<OnSaleCafeResponse>

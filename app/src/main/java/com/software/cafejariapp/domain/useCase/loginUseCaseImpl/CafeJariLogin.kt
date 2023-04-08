@@ -1,7 +1,7 @@
 package com.software.cafejariapp.domain.useCase.loginUseCaseImpl
 
 import com.software.cafejariapp.core.CustomException
-import com.software.cafejariapp.presentation.util.TimeUtil
+import com.software.cafejariapp.presentation.util.Time
 import com.software.cafejariapp.data.source.remote.dto.CafejariLoginRequest
 import com.software.cafejariapp.domain.repository.LoginRepository
 import com.software.cafejariapp.domain.entity.Login
@@ -23,7 +23,7 @@ class CafeJariLogin(
             val response =
                 loginRepository.login(CafejariLoginRequest(email = email, password = password))
             val accessToken = AccessToken(
-                value = response.access_token, expiration = TimeUtil.getAccessTokenExpiration()
+                value = response.access_token, expiration = Time.getAccessTokenExpiration()
             )
             val refreshToken = RefreshToken(id = 0, value = response.refresh_token)
 

@@ -17,9 +17,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import com.software.cafejariapp.core.customPlaceholder
 import com.software.cafejariapp.presentation.GlobalState
-import com.software.cafejariapp.presentation.util.TimeUtil
+import com.software.cafejariapp.presentation.util.Time
 import com.software.cafejariapp.core.toFloor
 import com.software.cafejariapp.domain.entity.CafeLog
 import com.software.cafejariapp.domain.entity.EventPointHistory
@@ -46,8 +45,7 @@ fun PointHistoryScreen(
     NetworkChecker(globalState)
 
     LaunchedEffect(Unit) {
-        profileViewModel.onEvent(ProfileEvent.GetEventPointHistories(globalState))
-        profileViewModel.onEvent(ProfileEvent.GetHistoryCafeLogs(globalState))
+        profileViewModel.onEvent(ProfileEvent.PointHistoryScreenInit(globalState))
     }
 
     Scaffold(
@@ -109,25 +107,23 @@ fun PointHistoryScreen(
                 ) { index ->
 
                     when {
+                        index == 0 && profileState.isEventPointHistoryLoading -> {
+                            FullSizeLoadingScreen(loadingText = "이벤트 내역 로딩중..")
+                        }
+                        index == 1 && profileState.isHistoryCafeLogLoading -> {
+                            FullSizeLoadingScreen(loadingText = "마스터 활동내역 로딩중..")
+                        }
                         index == 0 && profileState.eventPointHistories.isEmpty() -> {
                             EmptyScreen("이벤트로 받은 포인트 내역이 없습니다")
                         }
                         index == 1 && profileState.historyCafeLogs.isEmpty() -> {
                             EmptyScreen("혼잡도공유로 받은 포인트 내역이 없습니다")
                         }
-                        index == 0 -> {
-                            EventPointPart(
-                                eventPointHistories = profileState.eventPointHistories,
-                                isLoading = profileState.isEventPointHistoryLoading,
-                                onRefresh = { profileViewModel.onEvent(ProfileEvent.GetEventPointHistories(globalState)) }
-                            )
+                        index == 0 && profileState.eventPointHistories.isNotEmpty() -> {
+                            EventPointPart(eventPointHistories = profileState.eventPointHistories)
                         }
-                        index == 1 -> {
-                            CafeLogsPart(
-                                cafeLogsList = profileState.historyCafeLogs,
-                                isLoading = profileState.isHistoryCafeLogLoading,
-                                onRefresh = { profileViewModel.onEvent(ProfileEvent.GetHistoryCafeLogs(globalState)) }
-                            )
+                        index == 1 && profileState.historyCafeLogs.isNotEmpty() -> {
+                            CafeLogsPart(cafeLogs = profileState.historyCafeLogs)
                         }
                         else -> {  }
                     }
@@ -147,21 +143,102 @@ fun PointHistoryScreen(
 
 @Composable
 fun EventPointPart(
-    eventPointHistories: List<EventPointHistory>,
-    isLoading: Boolean,
-    onRefresh: () -> Unit
+    eventPointHistories: List<EventPointHistory>
 ) {
-
-    CustomSwipeRefresh(
-        isLoading = isLoading,
-        onRefresh = onRefresh
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        items(eventPointHistories) { eventPointHistory ->
 
-            items(eventPointHistories) { eventPointHistory ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 20.dp
+                    ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(3f),
+                ) {
+
+                    Text(
+                        text = eventPointHistory.content,
+                        style = MaterialTheme.typography.body2,
+                    )
+
+                    VerticalSpacer(height = 4.dp)
+
+                    Row {
+
+                        Text(
+                            text = "${Time.getLocalDate(eventPointHistory.time)}",
+                            style = MaterialTheme.typography.caption,
+                            color = Gray
+                        )
+
+                        HorizontalSpacer(width = 8.dp)
+
+                        Text(
+                            text = "지급완료",
+                            style = MaterialTheme.typography.overline,
+                            color = White,
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colors.secondary,
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .padding(
+                                    vertical = 2.dp,
+                                    horizontal = 4.dp
+                                )
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    Text(
+                        text = "+${eventPointHistory.point}P",
+                        style = MaterialTheme.typography.body2,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
+            }
+
+            BaseDivider()
+        }
+
+        item {
+
+            VerticalSpacer(height = 100.dp)
+        }
+    }
+}
+
+@Composable
+fun CafeLogsPart(
+    cafeLogs: List<List<CafeLog>>
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        cafeLogs.forEach { cafeLogs ->
+
+            items(cafeLogs) { cafeLog ->
 
                 Row(
                     modifier = Modifier
@@ -169,8 +246,7 @@ fun EventPointPart(
                         .padding(
                             horizontal = 16.dp,
                             vertical = 20.dp
-                        )
-                        .customPlaceholder(isLoading),
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
@@ -181,16 +257,15 @@ fun EventPointPart(
                     ) {
 
                         Text(
-                            text = eventPointHistory.content,
+                            text = "${cafeLog.name} ${cafeLog.floor.toFloor()}층",
                             style = MaterialTheme.typography.body2,
                         )
 
                         VerticalSpacer(height = 4.dp)
 
                         Row {
-
                             Text(
-                                text = "${TimeUtil.getLocalDate(eventPointHistory.time)}",
+                                text = "${Time.getLocalDate(cafeLog.start)}",
                                 style = MaterialTheme.typography.caption,
                                 color = Gray
                             )
@@ -198,14 +273,19 @@ fun EventPointPart(
                             HorizontalSpacer(width = 8.dp)
 
                             Text(
-                                text = "지급완료",
+                                text = "${Time.getHourMinute(cafeLog.start)} ~ ${
+                                    Time.getHourMinute(
+                                        cafeLog.finish
+                                    )
+                                }",
                                 style = MaterialTheme.typography.overline,
                                 color = White,
                                 modifier = Modifier
                                     .background(
                                         color = MaterialTheme.colors.secondary,
                                         shape = RoundedCornerShape(4.dp)
-                                    ).padding(
+                                    )
+                                    .padding(
                                         vertical = 2.dp,
                                         horizontal = 4.dp
                                     )
@@ -223,7 +303,7 @@ fun EventPointPart(
                     ) {
 
                         Text(
-                            text = "+${eventPointHistory.point}P",
+                            text = "+${cafeLog.point}P",
                             style = MaterialTheme.typography.body2,
                             color = MaterialTheme.colors.primary
                         )
@@ -232,106 +312,11 @@ fun EventPointPart(
 
                 BaseDivider()
             }
-
-            item {
-
-                VerticalSpacer(height = 100.dp)
-            }
         }
-    }
-}
 
-@Composable
-fun CafeLogsPart(
-    cafeLogsList: List<List<CafeLog>>,
-    isLoading: Boolean,
-    onRefresh: () -> Unit
-) {
+        item {
 
-    CustomSwipeRefresh(
-        isLoading = isLoading,
-        onRefresh = onRefresh
-    ) {
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-
-            cafeLogsList.forEach { cafeLogs ->
-
-                items(cafeLogs) { cafeLog ->
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = 16.dp,
-                                vertical = 20.dp
-                            )
-                            .customPlaceholder(isLoading),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth().weight(3f),
-                        ) {
-
-                            Text(
-                                text = "${cafeLog.name} ${cafeLog.floor.toFloor()}층",
-                                style = MaterialTheme.typography.body2,
-                            )
-
-                            VerticalSpacer(height = 4.dp)
-
-                            Row {
-                                Text(
-                                    text = "${TimeUtil.getLocalDate(cafeLog.start)}",
-                                    style = MaterialTheme.typography.caption,
-                                    color = Gray
-                                )
-
-                                HorizontalSpacer(width = 8.dp)
-
-                                Text(
-                                    text = "${TimeUtil.getHourMinute(cafeLog.start)} ~ ${
-                                        TimeUtil.getHourMinute(
-                                            cafeLog.finish
-                                        )
-                                    }",
-                                    style = MaterialTheme.typography.overline,
-                                    color = White,
-                                    modifier = Modifier.background(
-                                            color = MaterialTheme.colors.secondary,
-                                            shape = RoundedCornerShape(4.dp)
-                                        ).padding(
-                                            vertical = 2.dp, horizontal = 4.dp
-                                        )
-                                )
-                            }
-                        }
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth().weight(1f).fillMaxHeight(),
-                            horizontalAlignment = Alignment.End,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-
-                            Text(
-                                text = "+${cafeLog.point}P",
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.primary
-                            )
-                        }
-                    }
-
-                    BaseDivider()
-                }
-            }
-
-            item {
-
-                VerticalSpacer(height = 100.dp)
-            }
+            VerticalSpacer(height = 100.dp)
         }
     }
 }

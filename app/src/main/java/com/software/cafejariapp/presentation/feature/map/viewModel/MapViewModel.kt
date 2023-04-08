@@ -18,7 +18,7 @@ import com.software.cafejariapp.domain.util.DisableDateId
 import com.software.cafejariapp.presentation.feature.map.event.MapEvent
 import com.software.cafejariapp.presentation.feature.map.state.MapState
 import com.software.cafejariapp.presentation.feature.map.util.PointResultType
-import com.software.cafejariapp.presentation.util.TimeUtil
+import com.software.cafejariapp.presentation.util.Time
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,6 +49,7 @@ class MapViewModel @Inject constructor(
                     event.globalState.refreshCafeInfos()
                     delay(200L)
 
+
                     _state.value = state.value.copy(
                         isEventLoading = true,
                     )
@@ -64,6 +65,7 @@ class MapViewModel @Inject constructor(
                     )
                     delay(200L)
 
+
                     if (!state.value.isPopUpViewed && mainUseCase.isTodayExecutable(DisableDateId.popUp)) {
                         val popUpNotificationList = mainUseCase.getPopUpNotificationList()
                         if (popUpNotificationList.isNotEmpty()) {
@@ -73,12 +75,13 @@ class MapViewModel @Inject constructor(
                             )
                         }
                         if (event.globalState.user.value.dateJoined.length >= 19) {
-                            if (TimeUtil.getPassingDayFrom(event.globalState.user.value.dateJoined) < 3 && !mainUseCase.isOnboardingWatched()) {
+                            if (Time.getPassingDayFrom(event.globalState.user.value.dateJoined) < 3 && !mainUseCase.isOnboardingWatched()) {
                                 event.onOnBoardingDialogOpen()
                             }
                         }
                     }
                     delay(200L)
+
 
                     _state.value = state.value.copy(
                         onSaleCafes = mainUseCase.getOnSaleCafeList()

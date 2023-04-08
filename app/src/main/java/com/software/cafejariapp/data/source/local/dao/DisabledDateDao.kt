@@ -4,7 +4,7 @@ import androidx.room.*
 import com.software.cafejariapp.domain.entity.DisableDate
 
 @Dao
-interface DisableDateDao {
+interface DisabledDateDao {
 
     @Query("SELECT * FROM DisableDate")
     suspend fun getDisabledDates(): List<DisableDate>

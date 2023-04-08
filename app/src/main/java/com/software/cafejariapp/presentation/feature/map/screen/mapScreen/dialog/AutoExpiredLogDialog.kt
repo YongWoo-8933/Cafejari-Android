@@ -4,8 +4,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.OnUserEarnedRewardListener
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.software.cafejariapp.core.findActivity
 import com.software.cafejariapp.core.toFloor
 import com.software.cafejariapp.presentation.GlobalState
 import com.software.cafejariapp.presentation.component.CustomAlertDialog
@@ -14,7 +22,10 @@ import com.software.cafejariapp.presentation.feature.map.event.AdEvent
 import com.software.cafejariapp.presentation.feature.map.event.MapEvent
 import com.software.cafejariapp.presentation.feature.map.viewModel.AdViewModel
 import com.software.cafejariapp.presentation.feature.map.viewModel.MapViewModel
-import com.software.cafejariapp.presentation.util.TimeUtil
+import com.software.cafejariapp.presentation.util.AdId
+import com.software.cafejariapp.presentation.util.Time
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AutoExpiredLogDialog(
@@ -73,7 +84,7 @@ fun AutoExpiredLogDialog(
             Text(
                 "${
                     if (globalState.autoExpiredCafeLog.value.id != 0) {
-                        TimeUtil.getYearMonthDay(globalState.autoExpiredCafeLog.value.time) + " " + TimeUtil.getHourMinute(
+                        Time.getYearMonthDay(globalState.autoExpiredCafeLog.value.time) + " " + Time.getHourMinute(
                             globalState.autoExpiredCafeLog.value.time
                         )
                     } else ""

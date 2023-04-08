@@ -3,7 +3,6 @@ package com.software.cafejariapp.presentation.feature.main.screen
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
@@ -15,18 +14,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import com.software.cafejariapp.core.customPlaceholder
-import com.software.cafejariapp.domain.entity.Leader
+import com.software.cafejariapp.domain.entity.Ranker
 import com.software.cafejariapp.presentation.feature.main.component.ProfileImage
 import com.software.cafejariapp.presentation.GlobalState
 import com.software.cafejariapp.presentation.component.*
-import com.software.cafejariapp.presentation.util.TimeUtil
+import com.software.cafejariapp.presentation.util.Time
 import com.software.cafejariapp.presentation.feature.main.event.LeaderBoardEvent
 import com.software.cafejariapp.presentation.feature.main.viewModel.LeaderBoardViewModel
 import com.software.cafejariapp.presentation.theme.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
 @ExperimentalPagerApi
 @Composable
@@ -36,13 +35,13 @@ fun LeaderBoardScreen(
 ) {
 
     val leaderBoardState = leaderBoardViewModel.state.value
-    val pagerState = rememberPagerState(pageCount = 3)
+    val pagerState = rememberPagerState(pageCount = 2)
     val scope = rememberCoroutineScope()
 
     NetworkChecker(globalState)
 
     LaunchedEffect(Unit) {
-        leaderBoardViewModel.onEvent(LeaderBoardEvent.GetLeaders(globalState = globalState))
+        leaderBoardViewModel.onEvent(LeaderBoardEvent.Init(globalState = globalState))
     }
 
     Scaffold(
@@ -57,166 +56,100 @@ fun LeaderBoardScreen(
         backgroundColor = MoreLightGray
     ) { paddingValue ->
 
-        CustomSwipeRefresh(
-            isLoading = leaderBoardState.isLeadersLoading,
-            onRefresh = { leaderBoardViewModel.onEvent(LeaderBoardEvent.GetLeaders(globalState = globalState)) }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = paddingValue.calculateTopPadding())
         ) {
 
-            Column(
+            Row(
                 modifier = Modifier
+                    .background(color = White)
                     .fillMaxWidth()
-                    .padding(top = paddingValue.calculateTopPadding())
-                    .customPlaceholder(leaderBoardState.isLeadersLoading)
+                    .padding(vertical = 20.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.Center
             ) {
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = White)
-                        .padding(horizontal = 40.dp)
-                ) {
-
-                    TabRow(
-                        modifier = Modifier.height(48.dp),
-                        selectedTabIndex = pagerState.currentPage,
-                        divider = { TabRowDefaults.Divider(color = Transparent) },
-                        backgroundColor = White,
-                        indicator = {
-                            TabRowDefaults.Indicator(
-                                modifier = Modifier
-                                    .tabIndicatorOffset(it[pagerState.currentPage])
-                                    .padding(horizontal = 28.dp),
-                                color = MaterialTheme.colors.primary,
-                            )
-                        }
-                    ) {
-
-                        listOf(
-                            RankingType.Week,
-                            RankingType.Month,
-                            RankingType.Total
-                        ).forEach { type ->
-                            Tab(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .background(color = White),
-                                selected = pagerState.currentPage == type.index,
-                                onClick = {
-                                    scope.launch { pagerState.scrollToPage(type.index) }
-                                },
-                                text = {
-                                    Text(
-                                        text = type.string,
-                                        style = MaterialTheme.typography.subtitle2,
-                                        color = if (pagerState.currentPage == type.index) {
-                                            MaterialTheme.colors.primary
-                                        } else {
-                                            LightGray
-                                        }
-                                    )
-                                }
-                            )
-                        }
+                when(pagerState.currentPage) {
+                    0 -> {
+                        TopLeaderPart(
+                            leaders = leaderBoardState.rankingMonthList
+                        )
+                    }
+                    1 -> {
+                        TopLeaderPart(
+                            leaders = leaderBoardState.rankingWeekList
+                        )
                     }
                 }
+            }
 
-                Column(
-                    modifier = Modifier
-                        .background(color = White)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Column {
+
+                TabRow(
+                    modifier = Modifier.height(48.dp),
+                    selectedTabIndex = pagerState.currentPage,
+                    divider = { TabRowDefaults.Divider(color = Transparent) },
+                    indicator = {
+                        TabRowDefaults.Indicator(
+                            modifier = Modifier
+                                .tabIndicatorOffset(it[pagerState.currentPage])
+                                .padding(horizontal = 10.dp),
+                            color = MaterialTheme.colors.primary,
+                        )
+                    }
                 ) {
 
-                    VerticalSpacer(height = 20.dp)
-
-                    Card(
-                        backgroundColor = MoreLightGray,
-                        shape = RoundedCornerShape(50),
-                    ) {
-
-                        Text(
-                            modifier = Modifier.padding(
-                                vertical = 8.dp,
-                                horizontal = 12.dp
-                            ),
-                            style = MaterialTheme.typography.caption,
-                            text = when(pagerState.currentPage) {
-                                RankingType.Week.index -> TimeUtil.getFirstDayOfThisWeek() + "  ~  오늘"
-                                RankingType.Month.index -> "${LocalDateTime.now().year}년 ${LocalDateTime.now().monthValue}월 1일  ~  오늘"
-                                RankingType.Total.index -> "2022년 10월 1일  ~  오늘"
-                                else -> ""
+                    listOf("월간", "주간").forEachIndexed { index, text ->
+                        Tab(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .background(color = White),
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                scope.launch { pagerState.scrollToPage(index) }
                             },
+                            text = {
+                                Text(
+                                    text = text,
+                                    style = MaterialTheme.typography.subtitle2,
+                                    color = MaterialTheme.colors.primary
+                                )
+                            }
                         )
                     }
-
-                    VerticalSpacer(height = 20.dp)
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-
-                        when (pagerState.currentPage) {
-                            RankingType.Week.index -> {
-                                TopLeaderPart(
-                                    leaders = leaderBoardState.weekLeaders
-                                )
-                            }
-                            RankingType.Month.index -> {
-                                TopLeaderPart(
-                                    leaders = leaderBoardState.monthLeaders
-                                )
-                            }
-                            RankingType.Total.index -> {
-                                TopLeaderPart(
-                                    leaders = leaderBoardState.totalLeaders
-                                )
-                            }
-                        }
-                    }
-
-                    VerticalSpacer(height = 28.dp)
                 }
 
-                Column {
+                HorizontalPager(
+                    state = pagerState
+                ) { index ->
 
-                    HorizontalPager(
-                        state = pagerState
-                    ) { index ->
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        content = {
 
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            content = {
-
-                                item {
-                                    when (index) {
-                                        RankingType.Week.index -> {
-                                            BottomLeaderPart(
-                                                leaders = leaderBoardState.weekLeaders,
-                                                isLoading = leaderBoardState.isLeadersLoading
-                                            )
-                                        }
-                                        RankingType.Month.index -> {
-                                            BottomLeaderPart(
-                                                leaders = leaderBoardState.monthLeaders,
-                                                isLoading = leaderBoardState.isLeadersLoading
-                                            )
-                                        }
-                                        RankingType.Total.index -> {
-                                            BottomLeaderPart(
-                                                leaders = leaderBoardState.totalLeaders,
-                                                isLoading = leaderBoardState.isLeadersLoading
-                                            )
-                                        }
+                            item {
+                                when (index) {
+                                    0 -> {
+                                        BottomLeaderPart(
+                                            leaders = leaderBoardState.rankingMonthList,
+                                            isLoading = leaderBoardState.isRankingListLoading
+                                        )
                                     }
-
-                                    VerticalSpacer(height = 70.dp)
+                                    1 -> {
+                                        BottomLeaderPart(
+                                            leaders = leaderBoardState.rankingWeekList,
+                                            isLoading = leaderBoardState.isRankingListLoading
+                                        )
+                                    }
                                 }
+
+                                VerticalSpacer(height = 70.dp)
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }
@@ -326,7 +259,7 @@ fun TopLeaderUnit(
 
 @Composable
 fun TopLeaderPart(
-    leaders: List<Leader>
+    leaders: List<Ranker>
 ) {
 
     when (leaders.size) {
@@ -348,7 +281,7 @@ fun TopLeaderPart(
                 profileImage = leaders[0].userImage,
                 rankingText = "TOP1",
                 nickname = leaders[0].nickname,
-                activityTimeText = TimeUtil.getHourMinuteFromSecond(leaders[0].activity),
+                activityTimeText = Time.getHourMinuteFromSecond(leaders[0].activity),
                 profileImageSize = 108.dp
             )
         }
@@ -357,7 +290,7 @@ fun TopLeaderPart(
                 profileImage = leaders[0].userImage,
                 rankingText = "TOP1",
                 nickname = leaders[0].nickname,
-                activityTimeText = TimeUtil.getHourMinuteFromSecond(leaders[0].activity),
+                activityTimeText = Time.getHourMinuteFromSecond(leaders[0].activity),
                 profileImageSize = 108.dp
             )
 
@@ -367,7 +300,7 @@ fun TopLeaderPart(
                 profileImage = leaders[1].userImage,
                 rankingText = "TOP2",
                 nickname = leaders[1].nickname,
-                activityTimeText = TimeUtil.getHourMinuteFromSecond(leaders[1].activity),
+                activityTimeText = Time.getHourMinuteFromSecond(leaders[1].activity),
                 profileImageSize = 84.dp
             )
         }
@@ -376,7 +309,7 @@ fun TopLeaderPart(
                 profileImage = leaders[1].userImage,
                 rankingText = "TOP2",
                 nickname = leaders[1].nickname,
-                activityTimeText = TimeUtil.getHourMinuteFromSecond(leaders[1].activity),
+                activityTimeText = Time.getHourMinuteFromSecond(leaders[1].activity),
                 profileImageSize = 84.dp
             )
 
@@ -386,7 +319,7 @@ fun TopLeaderPart(
                 profileImage = leaders[0].userImage,
                 rankingText = "TOP1",
                 nickname = leaders[0].nickname,
-                activityTimeText = TimeUtil.getHourMinuteFromSecond(leaders[0].activity),
+                activityTimeText = Time.getHourMinuteFromSecond(leaders[0].activity),
                 profileImageSize = 108.dp
             )
 
@@ -396,7 +329,7 @@ fun TopLeaderPart(
                 profileImage = leaders[2].userImage,
                 rankingText = "TOP3",
                 nickname = leaders[2].nickname,
-                activityTimeText = TimeUtil.getHourMinuteFromSecond(leaders[2].activity),
+                activityTimeText = Time.getHourMinuteFromSecond(leaders[2].activity),
                 profileImageSize = 84.dp
             )
         }
@@ -405,7 +338,7 @@ fun TopLeaderPart(
 
 @Composable
 fun BottomLeaderPart(
-    leaders: List<Leader>,
+    leaders: List<Ranker>,
     isLoading: Boolean
 ) {
 
@@ -429,7 +362,7 @@ fun BottomLeaderPart(
                             .height(70.dp),
                         index = index,
                         masterNickname = ranking.nickname,
-                        activityTimeString = TimeUtil.getHourMinuteFromSecond(ranking.activity),
+                        activityTimeString = Time.getHourMinuteFromSecond(ranking.activity),
                         color = TextBlack,
                         imageModel = leaders[index].userImage,
                     )
@@ -437,13 +370,4 @@ fun BottomLeaderPart(
             }
         }
     }
-}
-
-sealed class RankingType(
-    val index: Int,
-    val string: String
-) {
-    object Week : RankingType(0, "주간")
-    object Month : RankingType(1, "월간")
-    object Total : RankingType(2, "누적")
 }

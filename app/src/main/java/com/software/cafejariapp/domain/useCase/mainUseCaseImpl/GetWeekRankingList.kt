@@ -2,24 +2,24 @@ package com.software.cafejariapp.domain.useCase.mainUseCaseImpl
 
 import com.software.cafejariapp.core.CustomException
 import com.software.cafejariapp.domain.repository.MainRepository
-import com.software.cafejariapp.domain.entity.Leader
+import com.software.cafejariapp.domain.entity.Ranker
 import com.software.cafejariapp.domain.entity.AccessToken
 
 
-class GetWeekLeaders(
+class GetWeekRankingList(
     private val mainRepository: MainRepository,
 ) {
     suspend operator fun invoke(
         accessToken: AccessToken,
-    ): List<Leader> {
+    ): List<Ranker> {
         return try {
             val rankingList = mainRepository.getWeekRankingList(accessToken.value)
                 .sortedBy { it.activity }
                 .reversed()
-            val response = mutableListOf<Leader>()
+            val response = mutableListOf<Ranker>()
             rankingList.forEach { ranking ->
                 response.add(
-                    Leader(
+                    Ranker(
                         nickname = ranking.user.profile.nickname,
                         activity = ranking.activity,
                         ranking = ranking.ranking,

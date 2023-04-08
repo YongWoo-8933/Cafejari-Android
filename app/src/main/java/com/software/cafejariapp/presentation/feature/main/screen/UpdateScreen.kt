@@ -170,8 +170,6 @@ data class Update(
         val update18 = Update(2, 4, 2, "23.02.27", "검색 ui 개선")
         val update19 = Update(2, 4, 3, "23.03.02", "추천인 에러 개선, 알림 에러 개선")
         val update20 = Update(2, 4, 4, "23.03.26", "혼잡도 공유활동 업데이트주기 설정 기능 추가, 전면광고 제거, 마스터활동 -> 혼잡도 공유활동으로 문구수정")
-        val update21 = Update(2, 5, 9, "23.03.30", "2.4.4 버전 앱 팅김에러 긴급수정, 일부 화면 swipe 새로고침 기능 추가")
-        val update22 = Update(2, 5, 10, "23.04.07", "swipe 새로고침 추가, 일부 화면 버그 개선, 누적 랭킹 추가")
 
         val updateList = listOf(
             update0,
@@ -194,9 +192,7 @@ data class Update(
             update17,
             update18,
             update19,
-            update20,
-            update21,
-            update22
+            update20
         ).reversed()
     }
 }

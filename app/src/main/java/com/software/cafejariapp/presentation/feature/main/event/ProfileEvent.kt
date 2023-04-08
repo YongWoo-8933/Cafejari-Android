@@ -36,7 +36,6 @@ sealed class ProfileEvent {
     data class SelectCafeLogs(val selectedCafeLogs: List<CafeLog>) : ProfileEvent()
 
     // point history
-    data class GetEventPointHistories(val globalState: GlobalState) : ProfileEvent()
-    data class GetHistoryCafeLogs(val globalState: GlobalState) : ProfileEvent()
+    data class PointHistoryScreenInit(val globalState: GlobalState) : ProfileEvent()
 
 }

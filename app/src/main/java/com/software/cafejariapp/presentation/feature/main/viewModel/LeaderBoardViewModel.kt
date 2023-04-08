@@ -7,11 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.software.cafejariapp.core.CustomException
 import com.software.cafejariapp.core.RefreshTokenExpiredException
 import com.software.cafejariapp.core.TokenExpiredException
+import com.software.cafejariapp.presentation.GlobalState
 import com.software.cafejariapp.domain.useCase.MainUseCase
 import com.software.cafejariapp.presentation.feature.main.event.LeaderBoardEvent
 import com.software.cafejariapp.presentation.feature.main.state.LeaderBoardState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 import javax.inject.Inject
@@ -27,39 +27,66 @@ class LeaderBoardViewModel @Inject constructor(
 
     fun onEvent(event: LeaderBoardEvent) {
         when (event) {
-            is LeaderBoardEvent.GetLeaders -> {
+            is LeaderBoardEvent.Init -> {
                 _state.value = state.value.copy(
-                    isLeadersLoading = true
+                    isRankingListLoading = true
                 )
                 viewModelScope.launch {
                     try {
+                        val rankingMonthList = mainUseCase.getMonthRankingList(
+                            event.globalState.accessToken.value
+                        )
+                        val rankingWeekList = mainUseCase.getWeekRankingList(
+                            event.globalState.accessToken.value
+                        )
                         _state.value = state.value.copy(
-                            totalLeaders = mainUseCase.getTotalLeaders(
-                                event.globalState.accessToken.value
-                            ),
-                            monthLeaders = mainUseCase.getMonthLeaders(
-                                event.globalState.accessToken.value
-                            ),
-                            weekLeaders = mainUseCase.getWeekLeaders(
-                                event.globalState.accessToken.value
-                            )
+                            rankingMonthList = rankingMonthList,
+                            rankingWeekList = rankingWeekList
                         )
                     } catch (e: TokenExpiredException) {
                         try {
                             event.globalState.refreshAccessToken {
-                                onEvent(LeaderBoardEvent.GetLeaders(event.globalState))
+                                onEvent(LeaderBoardEvent.Init(event.globalState))
                             }
                         } catch (e: RefreshTokenExpiredException) {
                         }
                     } catch (e: CustomException) {
                         event.globalState.showSnackBar(e.message.toString())
                     } finally {
-                        delay(600L)
                         _state.value = state.value.copy(
-                            isLeadersLoading = false
+                            isRankingListLoading = false
                         )
                     }
                 }
+            }
+        }
+    }
+
+    fun init(globalState: GlobalState) {
+        viewModelScope.launch {
+            try {
+                val rankingMonthList = mainUseCase.getMonthRankingList(
+                    globalState.accessToken.value
+                )
+                val rankingWeekList = mainUseCase.getWeekRankingList(
+                    globalState.accessToken.value
+                )
+                _state.value = state.value.copy(
+                    rankingMonthList = rankingMonthList, rankingWeekList = rankingWeekList
+                )
+            } catch (e: TokenExpiredException) {
+                try {
+                    globalState.refreshAccessToken {
+                        init(globalState)
+                    }
+                } catch (e: RefreshTokenExpiredException) {
+                }
+            } catch (e: CustomException) {
+                globalState.showSnackBar(e.message.toString())
+            } finally {
+                _state.value = state.value.copy(
+                    isRankingListLoading = true
+                )
             }
         }
     }

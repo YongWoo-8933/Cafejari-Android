@@ -7,7 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class User (
     val userId: Int,
     val profileId: Int,
-    val isAdmin: Boolean,
     val isStaff: Boolean,
     val dateJoined: String,
     val email: String,
@@ -25,7 +24,6 @@ data class User (
         val empty = User(
             0,
             0,
-            false,
             false,
             "",
             "",

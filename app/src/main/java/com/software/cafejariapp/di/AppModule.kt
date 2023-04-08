@@ -24,7 +24,6 @@ import com.software.cafejariapp.data.repositoryImpl.CafeRepositoryImpl
 import com.software.cafejariapp.domain.repository.CafeRepository
 import com.software.cafejariapp.domain.useCase.CafeUseCase
 import com.software.cafejariapp.data.repositoryImpl.TokenRepositoryImpl
-import com.software.cafejariapp.data.source.local.db.migration_2_3
 import com.software.cafejariapp.domain.repository.TokenRepository
 import com.software.cafejariapp.domain.useCase.TokenUseCase
 import com.software.cafejariapp.domain.useCase.cafeUseCaseImpl.*
@@ -57,12 +56,8 @@ object AppModule {
     @Singleton
     fun provideBaseDatabase(app: Application): BaseDatabase {
         return Room.databaseBuilder(
-            app,
-            BaseDatabase::class.java,
-            BaseDatabase.DATABASE_NAME
-        )
-            .addMigrations(migration_1_2, migration_2_3)
-            .build()
+            app, BaseDatabase::class.java, BaseDatabase.DATABASE_NAME
+        ).addMigrations(migration_1_2).build()
     }
 
     @Provides
@@ -155,7 +150,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideMainRepository(db: BaseDatabase, client: HttpClient): MainRepository {
-        return MainRepositoryImpl(db.disableDateDao, client)
+        return MainRepositoryImpl(db.disabledDateDao, client)
     }
 
     @Provides
@@ -186,9 +181,8 @@ object AppModule {
             deletePurchaseRequest = DeletePurchaseRequest(mainRepository),
             deleteInquiryCafe = DeleteInquiryCafe(mainRepository),
             deleteInquiryEtc = DeleteInquiryEtc(mainRepository),
-            getTotalLeaders = GetTotalLeaders(mainRepository),
-            getMonthLeaders = GetMonthLeaders(mainRepository),
-            getWeekLeaders = GetWeekLeaders(mainRepository),
+            getMonthRankingList = GetMonthRankingList(mainRepository),
+            getWeekRankingList = GetWeekRankingList(mainRepository),
             getPopUpNotificationList = GetPopUpNotificationList(mainRepository),
             getOnSaleCafeList = GetOnSaleCafeList(mainRepository),
         )

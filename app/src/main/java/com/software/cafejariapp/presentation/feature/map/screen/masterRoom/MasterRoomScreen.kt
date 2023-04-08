@@ -66,11 +66,7 @@ fun MasterRoomScreen(
         }
         delay(200L)
 
-        if (
-            (globalState.modalCafeInfo.value.id == 0 || globalState.modalCafe.value.id == 0) &&
-            !globalState.isMasterActivated.value &&
-            globalState.masterCafeLog.value.id == 0
-        ) {
+        if (globalState.modalCafeInfo.value.id == 0 || globalState.modalCafe.value.id == 0) {
             globalState.navController.navigate(Screen.MapScreen.route) {
                 popUpTo(Screen.MapScreen.route)
             }
@@ -218,7 +214,6 @@ fun MasterRoomScreen(
 
                 ActivatedMasterRoom(
                     globalState = globalState,
-                    onRefresh = { globalState.checkMasterActivity() },
                     onCrowdedHistoryClick = { selectedDetailLogId.value = it },
                     onCrowdedUpdateButtonClick = { masterRoomViewModel.onEvent(
                         MasterRoomEvent.UpdateCrowded(

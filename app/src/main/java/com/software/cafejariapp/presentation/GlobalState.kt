@@ -24,7 +24,7 @@ import com.software.cafejariapp.core.LocationTrackingNotPermitted
 import com.software.cafejariapp.core.RefreshTokenExpiredException
 import com.software.cafejariapp.core.TokenExpiredException
 import com.software.cafejariapp.presentation.util.Screen
-import com.software.cafejariapp.presentation.util.TimeUtil
+import com.software.cafejariapp.presentation.util.Time
 import com.software.cafejariapp.domain.entity.User
 import com.software.cafejariapp.domain.useCase.LoginUseCase
 import com.software.cafejariapp.domain.entity.CafeInfo
@@ -284,7 +284,7 @@ class GlobalState(
                 val autoExpiredCafeLogRes = cafeUseCase.getAutoExpiredCafeLog(accessToken.value)
 
                 if (autoExpiredCafeLogRes.id != 0) {
-                    if (TimeUtil.getPassingDayFrom(autoExpiredCafeLogRes.finish) > 1) {
+                    if (Time.getPassingDayFrom(autoExpiredCafeLogRes.finish) > 1) {
                         cafeUseCase.deleteAutoExpiredCafeLog(
                             accessToken = accessToken.value,
                             autoExpiredCafeLogId = autoExpiredCafeLogRes.id

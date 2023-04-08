@@ -58,7 +58,6 @@ object HttpRoutes {
     const val ON_SALE_CAFE = "$BASE_INFORMATION_URL/on_sale_cafe/"
     const val WEEK_LEADERS = "$BASE_USER_URL/week_leader/"
     const val MONTH_LEADERS = "$BASE_USER_URL/month_leader/"
-    const val TOTAL_LEADERS = "$BASE_USER_URL/total_leader/"
     fun deleteInquiryEtc(id: Int): String {
         return "$BASE_INFORMATION_URL/inquiry_etc/$id/" }
     fun deleteInquiryCafe(id: Int): String {

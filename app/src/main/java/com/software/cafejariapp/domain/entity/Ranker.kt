@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Parcelize
-data class Leader(
+data class Ranker(
     val nickname: String,
     val activity: Int,
     val ranking: Int,

@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.glide.GlideImage
 import com.software.cafejariapp.R
-import com.software.cafejariapp.core.customPlaceholder
 import com.software.cafejariapp.presentation.GlobalState
 import com.software.cafejariapp.presentation.util.Screen
 import com.software.cafejariapp.domain.entity.Item
@@ -111,13 +110,15 @@ fun ShopScreen(
 
             BaseDivider()
 
-            ItemListColumn(
-                selectedCategoryName = selectedCategoryName.value,
-                items = shopState.items,
-                isLoading = shopState.isItemLoading,
-                onRefresh = { shopViewModel.onEvent(ShopEvent.GetItems(globalState)) },
-                onItemClick = { selectedItem.value = it }
-            )
+            if (shopState.isItemLoading) {
+                FullSizeLoadingScreen()
+            } else {
+                ItemListColumn(
+                    selectedCategoryName = selectedCategoryName.value,
+                    items = shopState.items,
+                    onItemClick = { selectedItem.value = it }
+                )
+            }
         }
     }
 }
@@ -307,8 +308,6 @@ fun CategoryRow(
 fun ItemListColumn(
     selectedCategoryName: String,
     items: List<Item>,
-    isLoading: Boolean,
-    onRefresh: () -> Unit,
     onItemClick: (Item) -> Unit
 ) {
 
@@ -325,123 +324,115 @@ fun ItemListColumn(
         }
     }
 
-    CustomSwipeRefresh(
-        isLoading = isLoading,
-        onRefresh = onRefresh
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        items(
+            when (selectedCategoryName) {
+                "" -> items
+                else -> items.filter { it.category == selectedCategoryName }
+            }
+        ) { item ->
 
-            items(
-                when (selectedCategoryName) {
-                    "" -> items
-                    else -> items.filter { it.category == selectedCategoryName }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = White)
+                    .height(120.dp)
+                    .clickable { onItemClick(item) }
+                    .padding(
+                        top = 0.dp,
+                        start = 4.dp,
+                        end = 16.dp,
+                        bottom = 0.dp
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+            ) {
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(
+                            top = 16.dp,
+                            bottom = 16.dp
+                        )
+                        .weight(2f),
+                    elevation = 0.dp,
+                    backgroundColor = White
+                ) {
+
+                    GlideImage(
+                        modifier = Modifier.fillMaxHeight(),
+                        imageModel = item.image,
+                        contentScale = ContentScale.FillHeight,
+                        placeHolder = painterResource(id = R.drawable.glide_image_placeholder)
+                    )
                 }
-            ) { item ->
+
+                Column(
+                    modifier = Modifier
+                        .weight(3f)
+                        .padding(12.dp),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+
+                    Text(
+                        text = item.name,
+                        style = MaterialTheme.typography.subtitle2,
+                    )
+
+                    VerticalSpacer(height = 4.dp)
+
+                    Text(
+                        text = "( ${item.brand} )", color = HeavyGray
+                    )
+                }
 
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = White)
-                        .height(120.dp)
-                        .clickable { onItemClick(item) }
-                        .padding(
-                            top = 0.dp,
-                            start = 4.dp,
-                            end = 16.dp,
-                            bottom = 0.dp
-                        ),
+                        .weight(2f)
+                        .fillMaxHeight()
+                        .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.End
                 ) {
 
                     Card(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(vertical = 16.dp)
-                            .weight(2f),
-                        elevation = 0.dp,
-                        backgroundColor = White
+                        backgroundColor = White,
+                        shape = RoundedCornerShape(8.dp),
+                        border = BorderStroke(
+                            width = 2.dp,
+                            color = MaterialTheme.colors.secondary
+                        ),
+                        modifier = Modifier.size(16.dp),
+                        elevation = 0.dp
                     ) {
 
-                        GlideImage(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .customPlaceholder(isLoading),
-                            imageModel = item.image,
-                            contentScale = ContentScale.FillHeight,
-                            placeHolder = painterResource(id = R.drawable.glide_image_placeholder)
+                        Icon(
+                            modifier = Modifier.padding(2.dp),
+                            imageVector = Icons.Rounded.LocalParking,
+                            contentDescription = "가격 표시",
+                            tint = MaterialTheme.colors.secondary
                         )
                     }
 
-                    Column(
-                        modifier = Modifier
-                            .weight(3f)
-                            .padding(12.dp),
-                        verticalArrangement = Arrangement.Center,
-                    ) {
+                    HorizontalSpacer(width = 12.dp)
 
-                        Text(
-                            modifier = Modifier.customPlaceholder(isLoading),
-                            text = item.name,
-                            style = MaterialTheme.typography.subtitle2,
-                        )
-
-                        VerticalSpacer(height = 4.dp)
-
-                        Text(
-                            modifier = Modifier.customPlaceholder(isLoading),
-                            text = "( ${item.brand} )",
-                            color = HeavyGray
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .weight(2f)
-                            .padding(12.dp)
-                            .customPlaceholder(isLoading),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
-                    ) {
-
-                        Card(
-                            backgroundColor = White,
-                            shape = RoundedCornerShape(8.dp),
-                            border = BorderStroke(
-                                width = 2.dp,
-                                color = MaterialTheme.colors.secondary
-                            ),
-                            modifier = Modifier.size(16.dp),
-                            elevation = 0.dp
-                        ) {
-
-                            Icon(
-                                modifier = Modifier.padding(2.dp),
-                                imageVector = Icons.Rounded.LocalParking,
-                                contentDescription = "가격 표시",
-                                tint = MaterialTheme.colors.secondary
-                            )
-                        }
-
-                        HorizontalSpacer(width = 12.dp)
-
-                        Text(
-                            text = item.price.toString(),
-                            style = MaterialTheme.typography.body1,
-                        )
-                    }
+                    Text(
+                        text = item.price.toString(),
+                        style = MaterialTheme.typography.body1,
+                    )
                 }
-
-                BaseDivider()
             }
 
-            item {
+            BaseDivider()
+        }
 
-                VerticalSpacer(height = 120.dp)
-            }
+        item {
+
+            VerticalSpacer(height = 120.dp)
         }
     }
 }

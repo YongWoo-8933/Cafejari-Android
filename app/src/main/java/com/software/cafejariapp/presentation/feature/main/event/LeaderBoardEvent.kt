@@ -4,5 +4,5 @@ import com.software.cafejariapp.presentation.GlobalState
 
 
 sealed class LeaderBoardEvent {
-    data class GetLeaders(val globalState: GlobalState) : LeaderBoardEvent()
+    data class Init(val globalState: GlobalState) : LeaderBoardEvent()
 }

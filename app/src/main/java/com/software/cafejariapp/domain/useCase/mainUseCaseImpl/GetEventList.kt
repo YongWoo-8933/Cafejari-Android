@@ -1,7 +1,7 @@
 package com.software.cafejariapp.domain.useCase.mainUseCaseImpl
 
 import com.software.cafejariapp.core.CustomException
-import com.software.cafejariapp.presentation.util.TimeUtil
+import com.software.cafejariapp.presentation.util.Time
 import com.software.cafejariapp.domain.repository.MainRepository
 import com.software.cafejariapp.domain.entity.Event
 
@@ -21,7 +21,7 @@ class GetEventList(
                     val expiredEvents = mutableListOf<Event>()
                     val unExpiredEvents = mutableListOf<Event>()
                     events.forEach { event ->
-                        if (TimeUtil.isPast(event.finish)) {
+                        if (Time.isPast(event.finish)) {
                             expiredEvents.add(event)
                         } else {
                             unExpiredEvents.add(event)

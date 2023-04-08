@@ -33,7 +33,7 @@ import com.software.cafejariapp.presentation.theme.LightGray
 import com.software.cafejariapp.presentation.theme.TextBlack
 import com.software.cafejariapp.presentation.theme.White
 import com.software.cafejariapp.presentation.util.BottomSheetShape
-import com.software.cafejariapp.presentation.util.TimeUtil
+import com.software.cafejariapp.presentation.util.Time
 import kotlinx.coroutines.launch
 import java.time.YearMonth
 
@@ -176,7 +176,7 @@ fun ProfileKalendarScreen(
                             ),
                             onCurrentDayClick = { date, _ ->
                                 profileState.kalendarCafeLogs.forEach { cafeLogs ->
-                                    if (TimeUtil.getLocalDate(cafeLogs[0].start) == date) {
+                                    if (Time.getLocalDate(cafeLogs[0].start) == date) {
                                         profileViewModel.onEvent(
                                             ProfileEvent.SelectCafeLogs(cafeLogs)
                                         )
@@ -264,7 +264,7 @@ fun ProfileKalendarBottomSheetContent(
                 HorizontalSpacer(width = 16.dp)
 
                 Text(
-                    text = TimeUtil.getYearMonthDay(selectedCafeLogs[0].start),
+                    text = Time.getYearMonthDay(selectedCafeLogs[0].start),
                     style = MaterialTheme.typography.subtitle2,
                 )
             }
@@ -351,8 +351,8 @@ fun ProfileKalendarBottomSheetContent(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "${TimeUtil.getHourMinute(cafeLog.start)} ~ ${
-                                            TimeUtil.getHourMinute(cafeLog.finish)
+                                        text = "${Time.getHourMinute(cafeLog.start)} ~ ${
+                                            Time.getHourMinute(cafeLog.finish)
                                         }",
                                         style = MaterialTheme.typography.button,
                                         color = White
@@ -363,7 +363,7 @@ fun ProfileKalendarBottomSheetContent(
 
                                 Text(
                                     text = "총 ${
-                                        TimeUtil.getPassingTimeFromTo(
+                                        Time.getPassingTimeFromTo(
                                             start = cafeLog.start, 
                                             finish = cafeLog.finish
                                         )
