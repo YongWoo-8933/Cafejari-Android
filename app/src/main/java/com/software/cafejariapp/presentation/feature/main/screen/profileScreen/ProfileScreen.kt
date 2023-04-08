@@ -34,7 +34,7 @@ import com.software.cafejariapp.presentation.feature.main.viewModel.ProfileViewM
 import com.software.cafejariapp.presentation.theme.Gray
 import com.software.cafejariapp.presentation.theme.White
 import com.software.cafejariapp.presentation.util.Screen
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
@@ -114,7 +114,7 @@ fun ProfileScreen(
 
                 Text(
                     text = if (globalState.isLoggedIn.value) {
-                        "${Time.getPassingDayFrom(globalState.user.value.dateJoined)}일 째"
+                        "${TimeUtil.getPassingDayFrom(globalState.user.value.dateJoined)}일 째"
                     } else {
                         ""
                     },

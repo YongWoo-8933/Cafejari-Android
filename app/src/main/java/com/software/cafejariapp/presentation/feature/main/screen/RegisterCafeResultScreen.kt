@@ -16,15 +16,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.software.cafejariapp.core.customPlaceholder
 import com.software.cafejariapp.presentation.GlobalState
 import com.software.cafejariapp.presentation.component.*
 import com.software.cafejariapp.presentation.feature.main.event.MainEvent
 import com.software.cafejariapp.presentation.feature.main.viewModel.MainViewModel
 import com.software.cafejariapp.presentation.theme.Gray
-import com.software.cafejariapp.presentation.theme.LightGray
 import com.software.cafejariapp.presentation.theme.MoreHeavyGray
 import com.software.cafejariapp.presentation.theme.White
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -95,94 +95,97 @@ fun RegisterCafeResultScreen(
         ) {
 
             when {
-                mainState.isInquiryCafeLoading -> {
-                    FullSizeLoadingScreen()
-                }
                 mainState.inquiryCafes.isEmpty() -> {
                     EmptyScreen("등록 요청한 카페가 없습니다")
                 }
                 else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                    CustomSwipeRefresh(
+                        isLoading = mainState.isInquiryCafeLoading,
+                        onRefresh = { mainViewModel.onEvent(MainEvent.GetInquiryCafes(globalState)) }
                     ) {
 
-                        items(mainState.inquiryCafes) { inquiryCafe ->
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
 
-                            Column(
-                                modifier = Modifier
-                                    .combinedClickable(
-                                        onClick = {
-                                            if (selectedInquiryCafeId.value == inquiryCafe.id) {
-                                                selectedInquiryCafeId.value = 0
+                            items(mainState.inquiryCafes) { inquiryCafe ->
+
+                                Column(
+                                    modifier = Modifier
+                                        .combinedClickable(
+                                            onClick = {
+                                                if (selectedInquiryCafeId.value == inquiryCafe.id) {
+                                                    selectedInquiryCafeId.value = 0
+                                                } else {
+                                                    selectedInquiryCafeId.value = inquiryCafe.id
+                                                }
+                                            },
+                                            onLongClick = {
+                                                selectedDeleteInquiryCafeId.value = inquiryCafe.id
+                                            },
+                                        ).padding(
+                                            horizontal = 20.dp,
+                                            vertical = 24.dp
+                                        )
+                                ) {
+
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .customPlaceholder(visible = mainState.isInquiryCafeLoading),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+
+                                        Column {
+
+                                            Text(
+                                                text = "${TimeUtil.getLocalDate(inquiryCafe.requestDate)}",
+                                                style = MaterialTheme.typography.body2,
+                                                color = Gray
+                                            )
+
+                                            VerticalSpacer(height = 8.dp)
+
+                                            Text(
+                                                text = inquiryCafe.name,
+                                                style = MaterialTheme.typography.subtitle2
+                                            )
+
+                                            Text(
+                                                text = inquiryCafe.address, color = Gray
+                                            )
+                                        }
+
+                                        Icon(
+                                            imageVector = if (selectedInquiryCafeId.value == inquiryCafe.id) {
+                                                Icons.Rounded.ExpandLess
                                             } else {
-                                                selectedInquiryCafeId.value = inquiryCafe.id
-                                            }
-                                        },
-                                        onLongClick = {
-                                            selectedDeleteInquiryCafeId.value = inquiryCafe.id
-                                        },
-                                    )
-                                    .padding(
-                                        horizontal = 20.dp,
-                                        vertical = 24.dp
-                                    )
-                            ) {
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-
-                                    Column {
-
-                                        Text(
-                                            text = "${Time.getLocalDate(inquiryCafe.requestDate)}",
-                                            style = MaterialTheme.typography.body2,
-                                            color = LightGray
-                                        )
-
-                                        VerticalSpacer(height = 8.dp)
-
-                                        Text(
-                                            text = inquiryCafe.name,
-                                            style = MaterialTheme.typography.subtitle2
-                                        )
-
-                                        Text(
-                                            text = inquiryCafe.address,
-                                            color = Gray
+                                                Icons.Rounded.ExpandMore
+                                            },
+                                            contentDescription = "등록요청결과",
+                                            tint = MoreHeavyGray,
+                                            modifier = Modifier.size(28.dp)
                                         )
                                     }
 
-                                    Icon(
-                                        imageVector = if (selectedInquiryCafeId.value == inquiryCafe.id) {
-                                            Icons.Rounded.ExpandLess
+                                    AnimatedVisibility(
+                                        visible = selectedInquiryCafeId.value == inquiryCafe.id,
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically(),
+                                        modifier = Modifier.padding(top = 20.dp)
+                                    ) {
+
+                                        if (inquiryCafe.result.isBlank()) {
+                                            Text("\uD83D\uDCAC  아직 등록요청을 확인하지 못했어요")
                                         } else {
-                                            Icons.Rounded.ExpandMore
-                                        },
-                                        contentDescription = "등록요청결과",
-                                        tint = MoreHeavyGray,
-                                        modifier = Modifier.size(28.dp)
-                                    )
-                                }
-
-                                AnimatedVisibility(
-                                    visible = selectedInquiryCafeId.value == inquiryCafe.id,
-                                    enter = fadeIn() + expandVertically(),
-                                    exit = fadeOut() + shrinkVertically(),
-                                    modifier = Modifier.padding(top = 20.dp)
-                                ) {
-
-                                    if (inquiryCafe.result.isBlank()) {
-                                        Text("\uD83D\uDCAC  아직 등록요청을 확인하지 못했어요")
-                                    } else {
-                                        Text("[처리됨]  ${inquiryCafe.result}")
+                                            Text("[처리됨]  ${inquiryCafe.result}")
+                                        }
                                     }
                                 }
-                            }
 
-                            BaseDivider()
+                                BaseDivider()
+                            }
                         }
                     }
                 }

@@ -24,7 +24,7 @@ import com.software.cafejariapp.presentation.theme.HeavyGray
 import com.software.cafejariapp.presentation.theme.MoreLightGray
 import com.software.cafejariapp.presentation.theme.White
 import com.software.cafejariapp.presentation.util.Crowded
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 
 @Composable
 fun CrowdedDescriptionCard(
@@ -78,7 +78,7 @@ fun CrowdedDescriptionCard(
                                 )
 
                                 Text(
-                                    text = "${Time.getPassingTimeFrom(modalCafe.recentUpdatedLogs[0].update)}전",
+                                    text = "${TimeUtil.getPassingTimeFrom(modalCafe.recentUpdatedLogs[0].update)}전",
                                     style = MaterialTheme.typography.overline,
                                     color = HeavyGray,
                                     overflow = TextOverflow.Visible,

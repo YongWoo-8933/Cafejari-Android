@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -15,7 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.software.cafejariapp.R
 import com.software.cafejariapp.core.LocationTrackingNotPermitted
+import com.software.cafejariapp.domain.entity.Version
 import com.software.cafejariapp.presentation.GlobalState
+import com.software.cafejariapp.presentation.theme.LightGray
 import com.software.cafejariapp.presentation.util.Screen
 import kotlinx.coroutines.delay
 
@@ -71,5 +74,20 @@ fun SplashScreen(
             contentDescription = "초기 로딩 화면",
             modifier = Modifier.width(346.dp)
         )
+
+        Box(
+            modifier = Modifier
+                .zIndex(11f)
+                .fillMaxSize()
+                .padding(bottom = 12.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+
+            Text(
+                text = "ver ${Version.current.release}.${Version.current.major}.${Version.current.minor}",
+                style = MaterialTheme.typography.caption,
+                color = LightGray
+            )
+        }
     }
 }

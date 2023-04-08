@@ -9,7 +9,7 @@ import com.software.cafejariapp.core.CustomException
 import com.software.cafejariapp.core.MasterExpiredException
 import com.software.cafejariapp.core.RefreshTokenExpiredException
 import com.software.cafejariapp.core.TokenExpiredException
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 import com.software.cafejariapp.domain.useCase.CafeUseCase
 import com.software.cafejariapp.presentation.feature.map.event.MasterRoomEvent
 import com.software.cafejariapp.presentation.feature.map.util.PointResultType
@@ -69,7 +69,7 @@ class MasterRoomViewModel @Inject constructor(
                 }
             }
             is MasterRoomEvent.UpdateCrowded -> {
-                if (event.globalState.masterCafeLog.value.cafeDetailLogs.isNotEmpty() && Time.getSecondFrom(
+                if (event.globalState.masterCafeLog.value.cafeDetailLogs.isNotEmpty() && TimeUtil.getSecondFrom(
                         event.globalState.masterCafeLog.value.cafeDetailLogs[0].update
                     ) < 30
                 ) {
