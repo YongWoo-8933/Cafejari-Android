@@ -352,7 +352,9 @@ fun InactivatedMasterRoom(
                             !globalState.userLocation.value!!.isNearBy(
                                 globalState.modalCafeInfo.value.latitude,
                                 globalState.modalCafeInfo.value.longitude
-                            ) -> globalState.showSnackBar("카페와 거리가 너무 멉니다. 위치 조정 후 다시 시도해주세요")
+                            ) && !globalState.user.value.isAdmin -> {
+                                globalState.showSnackBar("카페와 거리가 너무 멉니다. 위치 조정 후 다시 시도해주세요")
+                            }
                             else -> onMasterRegisterButtonClick(
                                 selectedPeriodMinute.value,
                                 selectedCrowdedIndex.value

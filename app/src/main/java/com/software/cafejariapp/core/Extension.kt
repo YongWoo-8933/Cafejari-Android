@@ -9,32 +9,27 @@ import android.location.Location
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.runtime.MutableState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
-import com.google.android.gms.ads.rewarded.RewardItem
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.placeholder
+import com.google.accompanist.placeholder.shimmer
 import com.software.cafejariapp.data.util.error.ErrorType
 import com.software.cafejariapp.presentation.util.Crowded
 import com.software.cafejariapp.data.util.CustomJson
 import com.software.cafejariapp.data.util.error.ErrorResponse
 import com.software.cafejariapp.data.util.error.RegisterErrorResponse
 import com.software.cafejariapp.data.util.error.TokenInvalidResponse
-import com.software.cafejariapp.presentation.GlobalState
-import com.software.cafejariapp.presentation.feature.map.event.MapEvent
-import com.software.cafejariapp.presentation.util.AdId
+import com.software.cafejariapp.presentation.theme.MoreLightGray
+import com.software.cafejariapp.presentation.theme.White
 import io.ktor.client.features.*
 import io.ktor.client.statement.*
 import io.ktor.util.network.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.net.UnknownHostException
 import java.util.concurrent.CancellationException
@@ -91,6 +86,23 @@ fun Modifier.addFocusCleaner(
             focusManager.clearFocus()
         })
     }
+}
+
+
+/**
+ * placeholder 디폴트값
+ */
+fun Modifier.customPlaceholder(
+    visible: Boolean
+): Modifier {
+    return this.placeholder(
+        visible = visible,
+        color = MoreLightGray,
+        shape = RoundedCornerShape(4.dp),
+        highlight = PlaceholderHighlight.shimmer(
+            highlightColor = White,
+        )
+    )
 }
 
 

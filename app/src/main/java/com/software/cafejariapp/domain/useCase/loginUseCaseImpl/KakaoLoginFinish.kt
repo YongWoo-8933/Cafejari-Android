@@ -2,7 +2,7 @@ package com.software.cafejariapp.domain.useCase.loginUseCaseImpl
 
 import com.software.cafejariapp.core.CustomException
 import com.software.cafejariapp.data.source.remote.HttpRoutes
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 import com.software.cafejariapp.data.source.remote.dto.SocialLoginRequest
 import com.software.cafejariapp.domain.repository.LoginRepository
 import com.software.cafejariapp.domain.entity.User
@@ -25,7 +25,7 @@ class KakaoLoginFinish(
             )
             val accessToken = AccessToken(
                 value = socialLoginResponse.access_token,
-                expiration = Time.getAccessTokenExpiration()
+                expiration = TimeUtil.getAccessTokenExpiration()
             )
             val refreshToken = RefreshToken(id = 0, value = socialLoginResponse.refresh_token)
             tokenRepository.insertTokenToRoom(refreshToken)

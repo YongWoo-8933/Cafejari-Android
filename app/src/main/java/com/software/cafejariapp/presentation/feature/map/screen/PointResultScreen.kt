@@ -27,7 +27,7 @@ import com.software.cafejariapp.presentation.component.PrimaryCtaButton
 import com.software.cafejariapp.presentation.component.VerticalSpacer
 import com.software.cafejariapp.presentation.feature.map.util.PointResultType
 import com.software.cafejariapp.presentation.util.Screen
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 import com.software.cafejariapp.presentation.theme.White
 import kotlinx.coroutines.delay
 
@@ -83,7 +83,7 @@ fun PointResultScreen(
             Text(
                 text = if (globalState.masterCafeLog.value.start.isNotBlank() && globalState.masterCafeLog.value.finish.isNotBlank()) {
                     "(총 ${
-                        Time.getPassingTimeFromTo(
+                        TimeUtil.getPassingTimeFromTo(
                             globalState.masterCafeLog.value.start,
                             globalState.masterCafeLog.value.finish
                         )
