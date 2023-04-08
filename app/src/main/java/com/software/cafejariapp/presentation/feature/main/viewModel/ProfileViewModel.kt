@@ -12,17 +12,15 @@ import com.himanshoe.kalendar.common.data.KalendarEvent
 import com.software.cafejariapp.core.CustomException
 import com.software.cafejariapp.core.RefreshTokenExpiredException
 import com.software.cafejariapp.core.TokenExpiredException
-import com.software.cafejariapp.presentation.util.Screen
 import com.software.cafejariapp.domain.useCase.LoginUseCase
 import com.software.cafejariapp.domain.useCase.MainUseCase
-import com.software.cafejariapp.domain.entity.RefreshToken
 import com.software.cafejariapp.domain.useCase.CafeUseCase
 import com.software.cafejariapp.domain.useCase.TokenUseCase
 import com.software.cafejariapp.presentation.util.AuthResult
 import com.software.cafejariapp.presentation.feature.main.event.ProfileEvent
 import com.software.cafejariapp.presentation.feature.main.state.ProfileState
 import com.software.cafejariapp.presentation.feature.main.util.UriPathHelper
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -272,7 +270,7 @@ class ProfileViewModel @Inject constructor(
                         val kalendarEvents = mutableListOf<KalendarEvent>()
                         cafeLogs.forEach { cafeLog ->
                             val kalendarEvent = KalendarEvent(
-                                date = Time.getLocalDate(cafeLog[0].start) ?: LocalDate.of(
+                                date = TimeUtil.getLocalDate(cafeLog[0].start) ?: LocalDate.of(
                                     2010,
                                     1,
                                     1
@@ -307,29 +305,23 @@ class ProfileViewModel @Inject constructor(
                     selectedCafeLogs = event.selectedCafeLogs
                 )
             }
-            is ProfileEvent.PointHistoryScreenInit -> {
+            is ProfileEvent.GetEventPointHistories -> {
                 _state.value = state.value.copy(
-                    isHistoryCafeLogLoading = true,
-                    isEventPointHistoryLoading = true
+                    isEventPointHistoryLoading = true,
+                    historyCafeLogs = state.value.historyCafeLogs,
+                    isHistoryCafeLogLoading = state.value.isHistoryCafeLogLoading
                 )
                 viewModelScope.launch {
                     try {
                         _state.value = state.value.copy(
                             eventPointHistories = mainUseCase.getEventPointHistoryList(
                                 event.globalState.accessToken.value
-                            ),
-                            isEventPointHistoryLoading = false
-                        )
-                        _state.value = state.value.copy(
-                            historyCafeLogs = cafeUseCase.getMyCafeLogList(
-                                event.globalState.accessToken.value
-                            ),
-                            isHistoryCafeLogLoading = false
+                            )
                         )
                     } catch (e: TokenExpiredException){
                         try {
                             event.globalState.refreshAccessToken {
-                                onEvent(ProfileEvent.PointHistoryScreenInit(event.globalState))
+                                onEvent(ProfileEvent.GetEventPointHistories(event.globalState))
                             }
                         } catch (e: RefreshTokenExpiredException){
 
@@ -337,9 +329,40 @@ class ProfileViewModel @Inject constructor(
                     }  catch (e: CustomException){
                         event.globalState.showSnackBar(e.message.toString())
                     } finally {
+                        delay(600L)
+                        _state.value = state.value.copy(
+                            isEventPointHistoryLoading = false
+                        )
+                    }
+                }
+            }
+            is ProfileEvent.GetHistoryCafeLogs -> {
+                _state.value = state.value.copy(
+                    isHistoryCafeLogLoading = true,
+                )
+                viewModelScope.launch {
+                    try {
+                        _state.value = state.value.copy(
+                            historyCafeLogs = cafeUseCase.getMyCafeLogList(
+                                event.globalState.accessToken.value
+                            ),
+                            eventPointHistories = state.value.eventPointHistories,
+                            isEventPointHistoryLoading = state.value.isEventPointHistoryLoading
+                        )
+                    } catch (e: TokenExpiredException){
+                        try {
+                            event.globalState.refreshAccessToken {
+                                onEvent(ProfileEvent.GetHistoryCafeLogs(event.globalState))
+                            }
+                        } catch (e: RefreshTokenExpiredException){
+
+                        }
+                    }  catch (e: CustomException){
+                        event.globalState.showSnackBar(e.message.toString())
+                    } finally {
+                        delay(600L)
                         _state.value = state.value.copy(
                             isHistoryCafeLogLoading = false,
-                            isEventPointHistoryLoading = false
                         )
                     }
                 }

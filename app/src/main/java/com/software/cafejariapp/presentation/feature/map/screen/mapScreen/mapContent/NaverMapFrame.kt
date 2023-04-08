@@ -204,6 +204,7 @@ fun NaverMapFrame(
                     .zIndex(4f),
                 contentAlignment = Alignment.BottomStart
             ){
+
                 CustomButton(
                     backgroundColor = MaterialTheme.colors.primary,
                     shape = RoundedCornerShape(50),

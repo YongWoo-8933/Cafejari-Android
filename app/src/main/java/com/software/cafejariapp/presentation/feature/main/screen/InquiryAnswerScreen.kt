@@ -16,12 +16,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.software.cafejariapp.core.customPlaceholder
 import com.software.cafejariapp.presentation.GlobalState
-import com.software.cafejariapp.presentation.util.Time
+import com.software.cafejariapp.presentation.util.TimeUtil
 import com.software.cafejariapp.presentation.component.*
 import com.software.cafejariapp.presentation.feature.main.event.MainEvent
 import com.software.cafejariapp.presentation.feature.main.viewModel.MainViewModel
-import com.software.cafejariapp.presentation.theme.LightGray
+import com.software.cafejariapp.presentation.theme.Gray
 import com.software.cafejariapp.presentation.theme.MoreHeavyGray
 import com.software.cafejariapp.presentation.theme.White
 
@@ -94,93 +95,99 @@ fun InquiryAnswerScreen(
         ) {
 
             when {
-                mainState.isInquiryEtcLoading -> {
-                    FullSizeLoadingScreen()
-                }
                 mainState.inquiryEtcs.isEmpty() -> {
                     EmptyScreen("문의한 내용이 없습니다")
                 }
                 else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                    CustomSwipeRefresh(
+                        isLoading = mainState.isInquiryEtcLoading,
+                        onRefresh = { mainViewModel.onEvent(MainEvent.GetInquiryEtcs(globalState)) }
                     ) {
 
-                        items(mainState.inquiryEtcs) { inquiryEtc ->
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
 
-                            Column(
-                                modifier = Modifier
-                                    .combinedClickable(
-                                        onClick = {
-                                            if (selectedInquiryEtcId.value == inquiryEtc.id) {
-                                                selectedInquiryEtcId.value = 0
-                                            } else {
-                                                selectedInquiryEtcId.value = inquiryEtc.id
-                                            }
-                                        },
-                                        onLongClick = {
-                                            selectedDeleteInquiryEtcId.value = inquiryEtc.id
-                                        },
-                                    )
-                                    .padding(
-                                        horizontal = 20.dp,
-                                        vertical = 24.dp
-                                    )
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
+                            items(mainState.inquiryEtcs) { inquiryEtc ->
 
-                                    Column(
-                                        modifier = Modifier.weight(9f)
-                                    ) {
-
-                                        Text(
-                                            text = "${Time.getLocalDate(inquiryEtc.requestDate)}",
-                                            style = MaterialTheme.typography.body2,
-                                            color = LightGray
+                                Column(
+                                    modifier = Modifier
+                                        .combinedClickable(
+                                            onClick = {
+                                                if (selectedInquiryEtcId.value == inquiryEtc.id) {
+                                                    selectedInquiryEtcId.value = 0
+                                                } else {
+                                                    selectedInquiryEtcId.value = inquiryEtc.id
+                                                }
+                                            },
+                                            onLongClick = {
+                                                selectedDeleteInquiryEtcId.value = inquiryEtc.id
+                                            },
                                         )
-
-                                        VerticalSpacer(height = 8.dp)
-
-                                        Text(inquiryEtc.content)
-                                    }
+                                        .padding(
+                                            horizontal = 20.dp,
+                                            vertical = 24.dp
+                                        )
+                                ) {
 
                                     Row(
-                                        modifier = Modifier.weight(1f),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Center
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .customPlaceholder(visible = mainState.isInquiryEtcLoading),
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
 
-                                        Icon(
-                                            imageVector = if (selectedInquiryEtcId.value == inquiryEtc.id) {
-                                                Icons.Rounded.ExpandLess
-                                            } else {
-                                                Icons.Rounded.ExpandMore
-                                            },
-                                            contentDescription = "문의답변",
-                                            tint = MoreHeavyGray,
-                                            modifier = Modifier.size(28.dp)
-                                        )
+                                        Column(
+                                            modifier = Modifier.weight(9f)
+                                        ) {
+
+                                            Text(
+                                                text = "${TimeUtil.getLocalDate(inquiryEtc.requestDate)}",
+                                                style = MaterialTheme.typography.body2,
+                                                color = Gray
+                                            )
+
+                                            VerticalSpacer(height = 8.dp)
+
+                                            Text(inquiryEtc.content)
+                                        }
+
+                                        Row(
+                                            modifier = Modifier.weight(1f),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+
+                                            Icon(
+                                                imageVector = if (selectedInquiryEtcId.value == inquiryEtc.id) {
+                                                    Icons.Rounded.ExpandLess
+                                                } else {
+                                                    Icons.Rounded.ExpandMore
+                                                },
+                                                contentDescription = "문의답변",
+                                                tint = MoreHeavyGray,
+                                                modifier = Modifier.size(28.dp)
+                                            )
+                                        }
+                                    }
+
+                                    AnimatedVisibility(
+                                        visible = selectedInquiryEtcId.value == inquiryEtc.id,
+                                        enter = fadeIn() + expandVertically(),
+                                        exit = fadeOut() + shrinkVertically(),
+                                        modifier = Modifier.padding(top = 20.dp)
+                                    ) {
+
+                                        if (inquiryEtc.answer.isBlank()) {
+                                            Text("\uD83D\uDCAC  아직 문의를 확인하지 못했어요")
+                                        } else {
+                                            Text("[답변]  ${inquiryEtc.answer}")
+                                        }
                                     }
                                 }
 
-                                AnimatedVisibility(
-                                    visible = selectedInquiryEtcId.value == inquiryEtc.id,
-                                    enter = fadeIn() + expandVertically(),
-                                    exit = fadeOut() + shrinkVertically(),
-                                    modifier = Modifier.padding(top = 20.dp)
-                                ) {
-
-                                    if (inquiryEtc.answer.isBlank()) {
-                                        Text("\uD83D\uDCAC  아직 문의를 확인하지 못했어요")
-                                    } else {
-                                        Text("[답변]  ${inquiryEtc.answer}")
-                                    }
-                                }
+                                BaseDivider()
                             }
-
-                            BaseDivider()
                         }
                     }
                 }
