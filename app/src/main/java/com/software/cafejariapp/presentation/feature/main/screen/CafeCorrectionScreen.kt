@@ -28,12 +28,19 @@ import com.software.cafejariapp.presentation.theme.LightGray
 import com.software.cafejariapp.presentation.theme.White
 import kotlinx.coroutines.launch
 
+fun addNum(num1: Int, num2:Int): Int {
+    return num1 + num2
+}
+
 @ExperimentalPagerApi
 @Composable
 fun CafeCorrectionScreen(
     globalState: GlobalState,
     mainViewModel: MainViewModel,
 ) {
+
+    addNum(num1 = 1, num2 = 2)
+    addNum(1, 2)
 
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
