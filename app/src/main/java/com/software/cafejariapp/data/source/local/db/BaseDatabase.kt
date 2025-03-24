@@ -27,16 +27,16 @@ abstract class BaseDatabase: RoomDatabase() {
 }
 
 val migration_1_2: Migration = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
             "CREATE TABLE DisabledDate ('id' INTEGER NOT NULL, 'year' INTEGER NOT NULL, 'month' INTEGER NOT NULL, 'day' INTEGER NOT NULL, PRIMARY KEY('id'))"
         )
     }
 }
 
 val migration_2_3: Migration = object : Migration(2, 3) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
             "ALTER TABLE DisabledDate RENAME TO DisableDate"
         )
     }

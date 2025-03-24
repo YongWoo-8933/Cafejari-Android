@@ -20,18 +20,24 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.software.cafejariapp"
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode 67
         versionName "2.5.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
         }
 
         manifestPlaceholders = [
@@ -58,11 +64,14 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion '1.5.15'
     }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
     namespace 'com.software.cafejariapp'
@@ -70,25 +79,25 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
-    implementation 'androidx.activity:activity-compose:1.5.1'
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
+    implementation 'androidx.activity:activity-compose:1.9.1'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     // compose
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
-    implementation "androidx.compose.material3:material3:1.0.0-alpha15"
+    implementation "androidx.compose.material3:material3:1.2.1"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation "androidx.compose.foundation:foundation:$compose_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
-    implementation("io.coil-kt:coil-compose:2.1.0")
-    implementation("io.coil-kt:coil:2.1.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("io.coil-kt:coil:2.7.0")
     implementation("com.flaviofaria:kenburnsview:1.0.7")
     implementation("com.google.accompanist:accompanist-pager:0.12.0")
 
@@ -99,7 +108,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-navigation-animation:0.24.10-beta"
 
     // lifeCycle
-    def lifecycle_version = "2.5.0-rc02"
+    def lifecycle_version = "2.8.4"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
 
@@ -112,33 +121,33 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     // room
-    def room_version = "2.4.3"
+    def room_version = "2.6.1"
     implementation "androidx.room:room-common:$room_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
     // hilt
-    def dagger_version = "2.40.5"
-    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+    def dagger_version = "2.44"
+    implementation "androidx.hilt:hilt-navigation-compose:1.2.0"
     implementation "com.google.dagger:hilt-android:$dagger_version"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     kapt "com.google.dagger:hilt-android-compiler:$dagger_version"
 
     // 구글맵
-    implementation 'com.google.android.gms:play-services-location:20.0.0'
-    implementation 'com.google.android.gms:play-services-places:17.0.0'
-    implementation "com.google.android.libraries.places:places:2.6.0"
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
+    implementation 'com.google.android.gms:play-services-places:17.1.0'
+    implementation "com.google.android.libraries.places:places:3.5.0"
 
     // 네이버맵
-    implementation 'com.naver.maps:map-sdk:3.16.1'
-    implementation 'io.github.fornewid:naver-map-compose:1.3.1'
+    implementation 'com.naver.maps:map-sdk:3.19.1'
+    implementation 'io.github.fornewid:naver-map-compose:1.5.7'
 
     // 구글 로그인
-    implementation "com.google.android.gms:play-services-auth:20.2.0"
+    implementation "com.google.android.gms:play-services-auth:21.2.0"
 
     // 구글 admob
-    implementation 'com.google.android.gms:play-services-ads:21.1.0'
+    implementation 'com.google.android.gms:play-services-ads:23.2.0'
 
     // compose 디자인 라이브러리
     implementation "com.google.accompanist:accompanist-placeholder:0.25.1"
@@ -149,7 +158,7 @@ dependencies {
     implementation "com.kakao.sdk:v2-user:2.11.0"
 
     // compose 권한 관련 라이브러리
-    implementation "com.google.accompanist:accompanist-permissions:0.24.2-alpha"
+    implementation "com.google.accompanist:accompanist-permissions:0.35.0-alpha"
 
     // ktor
     def ktor_version = "1.6.7"
